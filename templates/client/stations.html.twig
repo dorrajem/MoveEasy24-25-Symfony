@@ -1,0 +1,18 @@
+{% extends 'client/base.html.twig' %}
+
+{% block title %}Stations{% endblock %}
+
+{% block body %}
+<section style="padding: 2rem;">
+  <h2 style="color: #2F7366;">Stations for "{{ itineraire.nomItineraire }}"</h2>
+  <ul style="list-style: none; padding: 0;">
+    {% for station in stations %}
+      <li style="margin: 1rem 0; padding: 1rem; background: #fff; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        <strong>{{ station.nomStation }}</strong> – {{ station.statut }}
+      </li>
+    {% else %}
+      <li>No stations found for this itinerary.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

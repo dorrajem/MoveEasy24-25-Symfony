@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MoveEasy Admin{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {# SB Admin 2 - Bootstrap core and custom styles #}
+    <link href="{{ asset('back/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('back/css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+    {% block stylesheets %}{% endblock %}
+            {{ encore_entry_link_tags('app') }}
+</head>
+<body id="page-top">
+    {% block body %}{% endblock %}
+
+    {# Core JavaScript #}
+    <script src="{{ asset('back/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('back/js/sb-admin-2.min.js') }}"></script>
+
+    {% block javascripts %}{% endblock %}
+            {{ encore_entry_script_tags('app') }}
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Transfar{% endblock %}</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f8f8;
+      color: #0D0D0D;
+    }
+    header {
+      background-color: #0D0D0D;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header nav a {
+      color: white;
+      margin-left: 2rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer {
+      background-color: #0D0D0D;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+  </style>
+  {% block styles %}{% endblock %}
+</head>
+<body>
+
+<header>
+  <div class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
+  <img src="{{ asset('imgs/MoveEasy.png') }}" alt="MoveEasy Logo" style="height: 40px;">
+  <strong style="font-size: 1.5rem;">MoveEasy</strong>
+</div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Book Now</a>
+    <a href="{{ path('app_client_itineraires') }}">Itineraries & Stations</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<main>
+  {% block body %}{% endblock %}
+</main>
+
+<footer>
+  &copy; {{ "now"|date("Y") }} MoveEasy. All rights reserved.
+</footer>
+
+</body>
+</html>

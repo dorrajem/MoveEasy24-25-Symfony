@@ -1,0 +1,13 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Create a Station{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Create a Station</h1>
+
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-success mt-3">Save</button>
+    <a href="{{ path('station_index') }}" class="btn btn-secondary mt-3">Cancel</a>
+{{ form_end(form) }}
+{% endblock %}

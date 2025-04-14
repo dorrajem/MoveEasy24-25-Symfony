@@ -1,0 +1,102 @@
+{% extends 'client/base.html.twig' %}
+
+{% block title %}Home | Transfar{% endblock %}
+
+{% block body %}
+<section class="hero" style="
+  background: linear-gradient(to right, #2F7366, #3BBF82);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+">
+  <h1 style="font-size: 3rem; margin-bottom: 1rem;">Because everyone deserves easy transportation</h1>
+  <p style="font-size: 1.25rem; margin-bottom: 2rem;">Reliable logistics and transportation services for disabled folks.</p>
+  <img src="{{ asset('imgs/placeholder.jpg') }}" alt="My Image"style="max-width: 100%; height: auto; border-radius: 12px;">
+</section>
+<section class="why-us" style="
+  background-color: #fff;
+  padding: 4rem 2rem;
+  text-align: center;
+">
+  <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: #2F7366;">Why Choose Us?</h2>
+  <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 3rem;">
+    We offer mobility aids pioneering the industry in Tunisia.
+  </p>
+
+  <div style="
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+  ">
+    {% set stats = [
+      { 'id': 'deliveries', 'label': 'Successful Accomodation', 'value': 6823 },
+      { 'id': 'clients', 'label': 'Happy Clients', 'value': 3670 },
+      { 'id': 'cities', 'label': 'Cities Covered', 'value': 200 }
+    ] %}
+
+    {% for stat in stats %}
+      <div style="flex: 1; min-width: 200px;">
+        <div style="
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: #3BBF82;
+        " id="{{ stat.id }}">0</div>
+        <div style="font-size: 1rem; color: #0D0D0D;">{{ stat.label }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.7/countUp.umd.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const options = { duration: 2 };
+
+    const stats = {
+      deliveries: 6823,
+      clients: 3670,
+      countries: 200
+    };
+
+    for (const id in stats) {
+      const countUp = new countUp.CountUp(id, stats[id], options);
+      if (!countUp.error) {
+        countUp.start();
+      } else {
+        console.error(countUp.error);
+      }
+    }
+  });
+</script>
+
+<section class="services" style="
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  background-color: #fff;
+">
+  {% for service in [
+    {'title': 'Mobility Aids', 'desc': 'Accomodations, railings, and extra space for motor disabilities', 'img': asset('imgs/ramp.jpg')},
+
+    {'title': 'Physical Guides', 'desc': 'Vision and hearing impairment guidelines in braille and sign language.', 'img':  asset('imgs/braille.jpg')},
+    {'title': 'Aiding Personnel', 'desc': 'Personnel on board present 24/7.', 'img':  asset('imgs/personnel.jpg')}
+  ] %}
+    <div class="card" style="
+      background-color: #f8f8f8;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      width: 300px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    ">
+      <img src="{{ service.img }}" alt="{{ service.title }}" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+      <h3 style="margin-bottom: 0.5rem; color: #2F7366;">{{ service.title }}</h3>
+      <p style="font-size: 0.95rem; color: #333;">{{ service.desc }}</p>
+    </div>
+  {% endfor %}
+</section>
+{% endblock %}

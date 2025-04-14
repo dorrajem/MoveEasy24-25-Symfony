@@ -1,0 +1,55 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}List of Itineraries{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">List of Itineraries</h1>
+
+<a href="{{ path('itineraire_new') }}" class="btn btn-success mb-3"><i class="fas fa-plus-circle"></i> Add</a>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-primary">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Distance</th>
+            <th>Departure</th>
+            <th>Arrival</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for itineraire in itineraires %}
+            <tr>
+                <td>{{ itineraire.id }}</td>
+                <td>{{ itineraire.nomItineraire }}</td>
+                <td>{{ itineraire.distance }} km</td>
+                <td>{{ itineraire.heureDepartPrevue|date('H:i') }}</td>
+                <td>{{ itineraire.heureArriveePrevue|date('H:i') }}</td>
+                <td>{{ itineraire.dateiti|date('d/m/Y') }}</td>
+                <td>
+                    <a href="{{ path('itineraire_show', {'id': itineraire.id}) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ path('itineraire_edit', {'id': itineraire.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ path('itineraire_delete', {'id': itineraire.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="{{ path('station_add_to_itineraire', { id: itineraire.id }) }}" class="btn btn-success">  <i class="fas fa-plus-circle"></i> Ajouter une station </a>
+
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7" class="text-center"> No itineraries found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('back/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('back/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ asset('back/js/sb-admin-2.min.js') }}"></script>
+{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('back/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('back/css/sb-admin-2.min.css') }}" rel="stylesheet">
+{% endblock %}
+

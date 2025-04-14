@@ -1,0 +1,24 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Itinerary Details{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Itinerary Details</h1>
+
+<table class="table table-bordered">
+
+
+    <tr><th>ID</th><td>{{ itineraire.id }}</td></tr>
+    <tr><th>Nom</th><td>{{ itineraire.nomItineraire }}</td></tr>
+    <tr><th>Distance</th><td>{{ itineraire.distance }} km</td></tr>
+    <tr><th>Départ</th><td>{{ itineraire.heureDepartPrevue|date('H:i') }}</td></tr>
+    <tr><th>Arrivée</th><td>{{ itineraire.heureArriveePrevue|date('H:i') }}</td></tr>
+    <tr><th>Date</th><td>{{ itineraire.dateiti|date('d/m/Y') }}</td></tr>
+
+
+</table>
+
+<a href="{{ path('itineraire_index') }}" class="btn btn-secondary">Back</a>
+<a href="{{ path('itineraire_edit', {'id': itineraire.id}) }}" class="btn btn-warning">Edit</a>
+<a href="{{ path('itineraire_delete', {'id': itineraire.id}) }}" class="btn btn-danger">Delete</a>
+{% endblock %}

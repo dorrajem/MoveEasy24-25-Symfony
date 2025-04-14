@@ -1,0 +1,14 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Delete Itinerary{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-danger">Delete Itinerary</h1>
+
+<p>Are you sure you want to delete it? <strong>{{ itineraire.nomItineraire }}</strong> ?</p>
+
+<form method="post">
+    <button class="btn btn-danger">Confirm deletion</button>
+    <a href="{{ path('station_index') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
