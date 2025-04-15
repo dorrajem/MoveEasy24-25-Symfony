@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        autowire: true      # Injecte automatiquement les dépendances dans vos services.
+        autoconfigure: true # Enregistre automatiquement vos services comme commandes, subscribers, etc.
+
+    # Charge toutes les classes de src/, sauf les entités, Kernel et DependencyInjection.
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # Définition du décorateur de provider d'utilisateur
+    App\Security\EntityUserProviderDecorator:
+        arguments:
+            $registry: '@doctrine'
+            $class: 'App\Entity\Utilisateur'
+            $property: 'email'
+        public: false

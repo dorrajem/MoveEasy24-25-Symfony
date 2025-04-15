@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'utilisateur{% endblock %}
+{% block page_title %}Modifier l'utilisateur{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{{ path('app_utilisateur_index') }}">Utilisateurs</a></li>
+  <li class="breadcrumb-item active">Modifier</li>
+{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-md-12">
+      {% include 'utilisateur/_form.html.twig' with {
+        'form_title': 'Modification des informations',
+        'button_label': 'Mettre à jour',
+        'cancel_path': path('app_utilisateur_index')
+      } %}
+    </div>
+  </div>
+{% endblock %}

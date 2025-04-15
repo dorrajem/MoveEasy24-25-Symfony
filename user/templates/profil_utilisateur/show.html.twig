@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Profil{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Détails du Profil #{{ profil.id }}</h3>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">{{ profil.id }}</dd>
+
+        <dt class="col-sm-3">Utilisateur</dt>
+        <dd class="col-sm-9">
+          {% if profil.utilisateur %}
+            {{ profil.utilisateur.nom }} {{ profil.utilisateur.prenom }}
+          {% else %}
+            Aucun
+          {% endif %}
+        </dd>
+
+        <dt class="col-sm-3">Adresse</dt>
+        <dd class="col-sm-9">{{ profil.adresse }}</dd>
+
+        <dt class="col-sm-3">Téléphone</dt>
+        <dd class="col-sm-9">{{ profil.telephone }}</dd>
+
+        <dt class="col-sm-3">Photo Profil</dt>
+        <dd class="col-sm-9">{{ profil.photoProfil }}</dd>
+      </dl>
+    </div>
+    <div class="card-footer">
+      <a href="{{ path('app_profil_utilisateur_edit', {id: profil.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+      <a href="{{ path('app_profil_utilisateur_index') }}" class="btn btn-secondary btn-sm">Retour à la liste</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

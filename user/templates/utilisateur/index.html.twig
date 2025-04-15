@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+{% block page_title %}Liste des utilisateurs{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Utilisateurs</li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <!-- En-tête de la carte -->
+      <div class="card-header">
+        <h3 class="card-title">Liste des utilisateurs</h3>
+      </div>
+      
+      <!-- Corps de la carte -->
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th style="width: 25%">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for utilisateur in utilisateurs %}
+              <tr>
+                <td>{{ utilisateur.id }}</td>
+                <td>{{ utilisateur.nom }}</td>
+                <td>{{ utilisateur.prenom }}</td>
+                <td>{{ utilisateur.email }}</td>
+                <td>
+                  <!-- Bouton "Voir" en bleu -->
+                  <a href="{{ path('app_utilisateur_show', {id: utilisateur.id}) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye"></i> Voir
+                  </a>
+                  <!-- Bouton "Modifier" en jaune -->
+                  <a href="{{ path('app_utilisateur_edit', {id: utilisateur.id}) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Modifier
+                  </a>
+                  <!-- Bouton "Supprimer" en rouge, avec confirmation et token CSRF -->
+                  <form method="post" action="{{ path('app_utilisateur_delete', {id: utilisateur.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                    <button class="btn btn-sm btn-danger" type="submit">
+                      <i class="fas fa-trash-alt"></i> Supprimer
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center">Aucun utilisateur trouvé.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pied de la carte -->
+      <div class="card-footer">
+        <!-- Bouton pour créer un nouvel utilisateur -->
+        <a href="{{ path('app_utilisateur_new') }}" class="btn btn-success">
+          <i class="fas fa-plus"></i> Ajouter un utilisateur
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

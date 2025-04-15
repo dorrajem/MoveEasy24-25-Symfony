@@ -1,0 +1,99 @@
+<!-- Sidebar -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a href="{{ path('app_utilisateur_index') }}" class="brand-link bg-primary py-2 d-flex align-items-center">
+    <img src="{{ asset('images/MoveEasy.png') }}"
+         alt="MoveEasy Logo"
+         class="brand-image img-circle elevation-3 ml-3"
+         style="max-height: 40px; width: auto; opacity: .9;">
+    <span class="brand-text font-weight-bold text-white ml-2">
+      Move<span class="text-warning">Easy</span>
+    </span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar User Panel -->
+    {% if app.user %}
+      <div class="user-panel mt-3 mb-3 py-2 px-2 d-flex align-items-center">
+        <div class="image">
+          <img src="{{ asset('img/user-default.jpg') }}"
+               class="img-circle elevation-2"
+               alt="User Image">
+        </div>
+        <div class="info ml-2">
+          <a href="#" class="d-block font-weight-bold">
+            {{ app.user.prenom }} {{ app.user.nom }}
+          </a>
+          <small class="text-muted">Administrateur</small>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Sidebar Search -->
+    <div class="form-inline mt-3">
+      <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar"
+               type="search"
+               placeholder="Rechercher..."
+               aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-sidebar">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-3">
+      <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent nav-compact"
+          data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+          <a href="{{ path('app_utilisateur_index') }}"
+             class="nav-link {% if app.request.get('_route') == 'app_utilisateur_index' %}active{% endif %}">
+            <i class="nav-icon fas fa-th-large"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+
+        <li class="nav-header text-uppercase font-weight-bold">
+          <i class="fas fa-tools mr-1"></i> Administration
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-cog"></i>
+            <p>
+              Configuration
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="far fa-circle nav-icon text-success"></i>
+                <p>Général</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="far fa-circle nav-icon text-warning"></i>
+                <p>Sécurité</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item mt-3">
+          <a href="{{ path('app_logout') }}" class="nav-link text-danger">
+            <i class="nav-icon fas fa-sign-out-alt"></i>
+            <p>Déconnexion</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,48 @@
+security:
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: plaintext
+
+    providers:
+        app_user_provider:
+            id: App\Security\EntityUserProviderDecorator
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Firewall pour le back-office (inchangé)
+        main:
+            pattern: ^/(admin|utilisateur)/
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: /utilisateur
+            logout:
+                path: app_logout
+                target: /login
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+
+        # Firewall pour le front-office
+        front:
+            pattern: ^/front/
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: front_login
+                check_path: front_login
+                # Redirige l'utilisateur connecté vers "Mon Profil"
+                default_target_path: front_profile
+            logout:
+                path: front_logout
+                target: /front/login
+
+    access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
