@@ -1,0 +1,91 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des avis{% endblock %}
+
+{% block body %}
+    <h1>Gestion des avis</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>{{ nombreAvis }}</h3>
+                    <p>Total des avis</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>{{ noteMoyenne|number_format(1) }}/5</h3>
+                    <p>Note moyenne</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Distribution des notes</h5>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-warning" style="width: {{ (distribution[1] / nombreAvis * 100)|number_format }}%">1★ ({{ distribution[1] }})</div>
+                    </div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-warning" style="width: {{ (distribution[2] / nombreAvis * 100)|number_format }}%">2★ ({{ distribution[2] }})</div>
+                    </div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-info" style="width: {{ (distribution[3] / nombreAvis * 100)|number_format }}%">3★ ({{ distribution[3] }})</div>
+                    </div>
+                    <div class="progress mb-1">
+                        <div class="progress-bar bg-success" style="width: {{ (distribution[4] / nombreAvis * 100)|number_format }}%">4★ ({{ distribution[4] }})</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: {{ (distribution[5] / nombreAvis * 100)|number_format }}%">5★ ({{ distribution[5] }})</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Utilisateur</th>
+                <th>Note</th>
+                <th>Date</th>
+                <th>Contenu</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in avis %}
+                <tr>
+                    <td>{{ a.id }}</td>
+                    <td>{{ a.idUtilisateur }}</td>
+                    <td>
+                        {% for i in 1..5 %}
+                            {% if i <= a.note %}
+                                <span class="text-warning">★</span>
+                            {% else %}
+                                <span class="text-secondary">☆</span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ a.dateAvis|date('d/m/Y') }}</td>
+                    <td>{{ a.contenu|length > 50 ? a.contenu|slice(0, 50) ~ '...' : a.contenu }}</td>
+                    <td>
+                        <a href="{{ path('admin_avis_show', {'id': a.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                        <form method="post" action="{{ path('admin_avis_delete', {'id': a.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avis?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a.id) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucun avis trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

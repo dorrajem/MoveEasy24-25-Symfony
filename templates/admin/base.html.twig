@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration MoveEasy{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --secondary-color: #0B5351;
+            --accent-color: #F3752B;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --info-color: #3B82F6;
+            --text-dark: #1F2937;
+            --text-medium: #4B5563;
+            --text-light: #F9FAFB;
+            --background-light: #F9FAFB;
+            --background-medium: #E5E7EB;
+            --background-dark: #111827;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
+        /* Sidebar modernisée */
+        #sidebar {
+            width: 280px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            background: var(--background-dark);
+            color: var(--text-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #sidebar .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar .sidebar-header h3 {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        #sidebar ul li a {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.8;
+            border-left: 4px solid transparent;
+        }
+
+        #sidebar ul li a:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: var(--primary-medium);
+        }
+
+        #sidebar ul li a.active {
+            opacity: 1;
+            background: rgba(0, 168, 150, 0.15);
+            border-left-color: var(--primary-medium);
+        }
+
+        #sidebar ul li a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Contenu principal */
+        #content {
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        /* Navbar modernisée */
+        .admin-navbar {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-navbar h4 {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Cartes de statistiques modernes */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-medium);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .stats-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .stats-card .icon.orange {
+            background: var(--accent-color);
+        }
+
+        .stats-card .icon.green {
+            background: var(--success-color);
+        }
+
+        .stats-card .icon.blue {
+            background: var(--info-color);
+        }
+
+        .stats-card .icon.red {
+            background: var(--danger-color);
+        }
+
+        .stats-card h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            color: var(--text-dark);
+        }
+
+        .stats-card p {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            margin: 0;
+        }
+
+        /* Cartes modernes pour les listes */
+        .data-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .data-card .card-header {
+            background: white;
+            border-bottom: 1px solid var(--background-medium);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-card .card-header h5 {
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .data-card .card-body {
+            padding: 0;
+        }
+
+        /* Items de liste modernes */
+        .list-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--background-medium);
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background: var(--background-light);
+        }
+
+        .list-item .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .list-item .item-info .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .list-item .item-info .text h6 {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--text-dark);
+        }
+
+        .list-item .item-info .text p {
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            margin: 0;
+        }
+
+        .list-item .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Badges modernes */
+        .badge {
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning-color) !important;
+        }
+
+        .badge.bg-success {
+            background-color: var(--success-color) !important;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger-color) !important;
+        }
+
+        /* Boutons modernes */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-medium);
+            border-color: var(--primary-medium);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-medium);
+            border-color: var(--primary-medium);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-medium);
+            color: white;
+        }
+
+        /* Formulaire moderne */
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid var(--background-medium);
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-medium);
+            box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.1);
+        }
+
+        /* Alertes modernes */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 15px 20px;
+        }
+
+        .alert-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .alert-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(-280px);
+            }
+            
+            #sidebar.active {
+                transform: translateX(0);
+            }
+            
+            #content {
+                margin-left: 0;
+            }
+            
+            .admin-navbar {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper d-flex">
+        <!-- Sidebar moderne -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-shield-alt"></i> Admin MoveEasy</h3>
+            </div>
+
+            <ul class="components">
+                <li>
+                    <a href="{{ path('admin_dashboard') }}" class="{{ app.request.get('_route') == 'admin_dashboard' ? 'active' : '' }}">
+                        <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('admin_reclamation_index') }}" class="{{ app.request.get('_route') starts with 'admin_reclamation' ? 'active' : '' }}">
+                        <i class="fas fa-exclamation-circle"></i> Réclamations
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('admin_avis_index') }}" class="{{ app.request.get('_route') starts with 'admin_avis' ? 'active' : '' }}">
+                        <i class="fas fa-star"></i> Avis clients
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="return false;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenu principal -->
+        <div id="content">
+            <!-- Navbar moderne -->
+            <nav class="admin-navbar">
+                <h4>{% block page_title %}Tableau de bord{% endblock %}</h4>
+                <button class="btn btn-outline-primary d-lg-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+
+            <!-- Messages flash modernes -->
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show mb-4">
+                        {{ message }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <!-- Contenu spécifique -->
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Toggle Sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

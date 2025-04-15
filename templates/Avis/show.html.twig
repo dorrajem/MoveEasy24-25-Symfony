@@ -1,0 +1,343 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MoveEasy - Détail de l'avis{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;    /* Dark teal */
+            --primary-medium: #00A896;   /* Medium teal */
+            --primary-light: #99D5CF;    /* Light teal */
+            --secondary-color: #0B5351;  /* Using primary dark as secondary */
+            --accent-color: #F3752B;     /* Complementary orange for contrast */
+            --success-color: #2E8B57;    /* SeaGreen */
+            --warning-color: #FFC857;    /* Amber */
+            --danger-color: #E63946;     /* Red */
+            --text-dark: #2A2D34;        /* Dark grey for text */
+            --text-light: #F8F9FA;       /* Light color for text on dark backgrounds */
+            --background-light: #F8F9FA; /* Light background */
+            --background-medium: #E9ECEF; /* Medium light background */
+        }
+
+        .rail-banner {
+            background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75)), 
+                        url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .rail-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(11, 83, 81, 0.3), transparent);
+        }
+
+        .rail-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            overflow: hidden;
+        }
+
+        .rail-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rail-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .rail-btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-medium);
+            color: var(--primary-medium);
+        }
+
+        .rail-btn-outline:hover {
+            background-color: var(--primary-medium);
+            color: white;
+        }
+        
+        .rail-btn-danger {
+            background-color: transparent;
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .rail-btn-danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .rating-stars {
+            color: var(--warning-color);
+            font-size: 1.5rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-medium));
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+
+        .form-header::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
+        }
+        
+        .avatar-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: var(--primary-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-right: 20px;
+        }
+        
+        .comment-container {
+            background-color: var(--background-light);
+            border-left: 4px solid var(--primary-light);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .action-button {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-medium));
+            color: white;
+        }
+        
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Banner #}
+    <div class="rail-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3 fw-bold"><i class="fas fa-comment-dots me-3"></i>Détail de l'Avis</h1>
+                    <p class="lead mb-4">Consultez les informations détaillées de cet avis utilisateur</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <a href="{{ path('app_avis_index') }}" class="rail-btn-outline btn">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste des avis
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="form-section">
+                    <div class="form-header d-flex align-items-center">
+                        <div class="avatar-container">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h2 class="h3 mb-2">Utilisateur #{{ avis.idUtilisateur }}</h2>
+                            <div class="rating-stars mb-2">
+                                {% for i in 1..5 %}
+                                    {% if i <= avis.note %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2 fs-6">({{ avis.note }}/5)</span>
+                            </div>
+                            <div class="text-light opacity-75">
+                                <i class="far fa-calendar-alt me-2"></i>{{ avis.dateAvis|date('d/m/Y') }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="comment-container">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-quote-left me-2 text-muted"></i>Commentaire :</h5>
+                            <p class="lead">{{ avis.contenu }}</p>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('app_avis_edit', {'id': avis.id}) }}" class="rail-btn action-button">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                            
+                            <button type="button" class="rail-btn-danger action-button" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash-alt me-2"></i>Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Cette action est irréversible.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="rail-btn-outline btn" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_avis_delete', {'id': avis.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avis.id) }}">
+                        <button type="submit" class="rail-btn-danger btn">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <img src="{{ asset('images/MoveEasy.png') }}" width="50" alt="MoveEasy Logo" class="me-2">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li class="mb-2"><a href="{{ path('app_avis_index') }}" class="text-white text-decoration-none">Avis</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

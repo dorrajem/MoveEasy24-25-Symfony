@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MoveEasy{% endblock %}</title>
+    
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            :root {
+                --primary-color: #0B5351;
+                --primary-medium: #00A896;
+                --primary-light: #99D5CF;
+                --secondary-color: #0B5351;
+                --accent-color: #F3752B;
+                --success-color: #10B981;
+                --warning-color: #F59E0B;
+                --danger-color: #EF4444;
+                --info-color: #3B82F6;
+                --text-dark: #1F2937;
+                --text-medium: #4B5563;
+                --text-light: #F9FAFB;
+                --background-light: #F9FAFB;
+                --background-medium: #E5E7EB;
+                --background-dark: #111827;
+                --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                background-color: var(--background-light);
+                color: var(--text-dark);
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            /* Header moderne */
+            .riot-header {
+                background-color: var(--primary-color);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .riot-header .navbar-brand {
+                font-weight: 700;
+                font-size: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .riot-header .navbar-brand i {
+                font-size: 1.8rem;
+            }
+
+            .riot-header .nav-link {
+                font-weight: 500;
+                padding: 8px 16px;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .riot-header .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .riot-header .btn-outline-light {
+                border-radius: 8px;
+                font-weight: 500;
+                padding: 8px 16px;
+                transition: all 0.2s ease;
+            }
+
+            .riot-header .btn-outline-light:hover {
+                transform: translateY(-2px);
+            }
+
+            /* Bouton principal */
+            .riot-btn {
+                background-color: var(--accent-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                box-shadow: var(--card-shadow);
+            }
+
+            .riot-btn:hover {
+                background-color: #d36224;
+                transform: translateY(-2px);
+                box-shadow: var(--card-shadow-hover);
+                color: white;
+            }
+
+            /* Bannière moderne */
+            .riot-banner {
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-medium));
+                color: var(--text-light);
+                padding: 80px 0;
+                margin-bottom: 40px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .riot-banner::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+                opacity: 0.4;
+            }
+
+            .riot-banner h1 {
+                font-weight: 800;
+                margin-bottom: 20px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .riot-banner p {
+                font-size: 1.2rem;
+                opacity: 0.9;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Cartes modernes */
+            .riot-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                border: none;
+                overflow: hidden;
+                margin-bottom: 30px;
+            }
+
+            .riot-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--card-shadow-hover);
+            }
+
+            .riot-card .card-header {
+                background: white;
+                border-bottom: 1px solid var(--background-medium);
+                padding: 20px;
+                font-weight: 600;
+                color: var(--text-dark);
+            }
+
+            .riot-card .card-body {
+                padding: 20px;
+            }
+
+            /* Footer moderne */
+            .riot-footer {
+                background-color: var(--primary-color);
+                color: var(--text-light);
+                padding: 60px 0 30px;
+                margin-top: auto;
+            }
+
+            .riot-footer h5 {
+                font-weight: 600;
+                margin-bottom: 20px;
+                color: white;
+            }
+
+            .riot-footer a {
+                color: var(--primary-light);
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            .riot-footer a:hover {
+                color: white;
+            }
+
+            .riot-footer ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .riot-footer ul li {
+                margin-bottom: 10px;
+            }
+
+            .riot-footer .divider {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                margin: 30px 0;
+            }
+
+            /* Formulaire moderne */
+            .form-label {
+                font-weight: 500;
+                color: var(--text-dark);
+                margin-bottom: 8px;
+            }
+
+            .form-control, .form-select {
+                border-radius: 8px;
+                padding: 10px 15px;
+                border: 1px solid var(--background-medium);
+                transition: all 0.2s ease;
+            }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--primary-medium);
+                box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.1);
+            }
+
+            /* Alertes modernes */
+            .alert {
+                border-radius: 8px;
+                border: none;
+                padding: 15px 20px;
+            }
+
+            .alert-success {
+                background-color: var(--success-color);
+                color: white;
+            }
+
+            .alert-danger {
+                background-color: var(--danger-color);
+                color: white;
+            }
+
+            /* Section de contenu */
+            .riot-section {
+                padding: 60px 0;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .riot-banner {
+                    padding: 60px 0;
+                    text-align: center;
+                }
+                
+                .riot-banner h1 {
+                    font-size: 2rem;
+                }
+                
+                .riot-footer {
+                    text-align: center;
+                }
+                
+                .riot-footer .col-md-4 {
+                    margin-bottom: 30px;
+                }
+            }
+        </style>
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
+</head>
+<body>
+    <!-- Header moderne -->
+    <header class="riot-header">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path('app_home') }}">
+                    <i class="fas fa-train"></i>
+                    <span>MoveEasy</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_support_index') }}">Support</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3">
+                        {% if app.user %}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle"></i>
+                                    <span>{{ app.user.username }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ path('app_profile') }}">Profil</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-light">Connexion</a>
+                            <a href="{{ path('app_register') }}" class="riot-btn">Inscription</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        {% block breadcrumbs %}
+            <!-- Optional breadcrumb block -->
+        {% endblock %}
+        
+        {% include 'includes/_flash_messages.html.twig' %}
+        
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Footer moderne -->
+    <footer class="riot-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>MoveEasy</h5>
+                    <p>Votre solution de voyage en train simplifiée et moderne.</p>
+                    <div class="mt-4">
+                        <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens rapides</h5>
+                    <ul>
+                        <li><a href="{{ path('app_support_index') }}">Support</a></li>
+                        <li><a href="#">Conditions d'utilisation</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <ul>
+                        <li class="mb-3">
+                            <i class="fas fa-envelope me-2"></i> 
+                            <a href="mailto:contact@moveeasy.com">contact@moveeasy.com</a>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-phone me-2"></i> 
+                            <a href="tel:+33123456789">+33 1 23 45 67 89</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt me-2"></i> 
+                            123 Rue du Train, Paris
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="text-center">
+                <small>&copy; {{ 'now'|date('Y') }} MoveEasy. Tous droits réservés.</small>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

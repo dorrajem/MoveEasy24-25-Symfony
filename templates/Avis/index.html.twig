@@ -1,0 +1,706 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MoveEasy - Avis Clients{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;    /* Dark teal */
+            --primary-medium: #00A896;   /* Medium teal */
+            --primary-light: #99D5CF;    /* Light teal */
+            --secondary-color: #0B5351;  /* Using primary dark as secondary */
+            --accent-color: #F3752B;     /* Complementary orange for contrast */
+            --success-color: #2E8B57;    /* SeaGreen */
+            --warning-color: #FFC857;    /* Amber */
+            --danger-color: #E63946;     /* Red */
+            --text-dark: #2A2D34;        /* Dark grey for text */
+            --text-light: #F8F9FA;       /* Light color for text on dark backgrounds */
+            --background-light: #F8F9FA; /* Light background */
+            --background-medium: #E9ECEF; /* Medium light background */
+        }
+
+        .rail-banner {
+            background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75)), 
+                        url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .rail-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(11, 83, 81, 0.3), transparent);
+        }
+
+        .rail-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            overflow: hidden;
+        }
+
+        .rail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .rail-card .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .rail-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rail-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .rail-btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-medium);
+            color: var(--primary-medium);
+        }
+
+        .rail-btn-outline:hover {
+            background-color: var(--primary-medium);
+            color: white;
+        }
+
+        .filter-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .filter-card .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+        }
+
+        .search-box {
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-medium);
+            box-shadow: 0 0 0 3px rgba(153, 213, 207, 0.5);
+        }
+
+        .search-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .search-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .rating-stars {
+            color: var(--warning-color);
+            font-size: 1.1rem;
+        }
+
+        .rating-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .rating-excellent { background-color: #E8F5E9; color: var(--success-color); border-left: 3px solid var(--success-color); }
+        .rating-good { background-color: #E3F2FD; color: #1976D2; border-left: 3px solid #1976D2; }
+        .rating-average { background-color: #FFF8E1; color: #FF8F00; border-left: 3px solid #FF8F00; }
+        .rating-poor { background-color: #FFF3E0; color: #E64A19; border-left: 3px solid #E64A19; }
+        .rating-bad { background-color: #FFEBEE; color: var(--danger-color); border-left: 3px solid var(--danger-color); }
+
+        .avatar-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(11, 83, 81, 0.1);
+            color: var(--primary-medium);
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avis-date {
+            font-size: 0.85rem;
+            color: #777;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Banner #}
+    <div class="rail-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3 fw-bold"><i class="fas fa-comment-alt me-3"></i>Avis Clients MoveEasy</h1>
+                    <p class="lead mb-4">Découvrez ce que nos clients pensent de nos services ferroviaires</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="{{ path('app_avis_new') }}" class="rail-btn btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i> Ajouter un Avis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        {# Flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas 
+                            {% if label == 'success' %}fa-check-circle
+                            {% elseif label == 'danger' %}fa-exclamation-circle
+                            {% elseif label == 'warning' %}fa-exclamation-triangle
+                            {% else %}fa-info-circle{% endif %} 
+                            me-2"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="row">
+            {# Filter sidebar #}
+            <div class="col-lg-3 mb-4">
+                <div class="card filter-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtres</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-3"><i class="fas fa-star me-2"></i>Note</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="" id="filter-all" checked>
+                            <label class="form-check-label" for="filter-all">
+                                Toutes les notes
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="5" id="filter-five">
+                            <label class="form-check-label d-flex align-items-center" for="filter-five">
+                                <span class="rating-badge rating-excellent me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                5 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="4" id="filter-four">
+                            <label class="form-check-label d-flex align-items-center" for="filter-four">
+                                <span class="rating-badge rating-good me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                4 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="3" id="filter-three">
+                            <label class="form-check-label d-flex align-items-center" for="filter-three">
+                                <span class="rating-badge rating-average me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                3 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="2" id="filter-two">
+                            <label class="form-check-label d-flex align-items-center" for="filter-two">
+                                <span class="rating-badge rating-poor me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                2 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="1" id="filter-one">
+                            <label class="form-check-label d-flex align-items-center" for="filter-one">
+                                <span class="rating-badge rating-bad me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                1 étoile
+                            </label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3"><i class="fas fa-sort me-2"></i>Tri</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="newest" id="sort-newest" checked>
+                            <label class="form-check-label" for="sort-newest">
+                                Plus récents d'abord
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="oldest" id="sort-oldest">
+                            <label class="form-check-label" for="sort-oldest">
+                                Plus anciens d'abord
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="highest" id="sort-highest">
+                            <label class="form-check-label" for="sort-highest">
+                                Notes les plus hautes
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="lowest" id="sort-lowest">
+                            <label class="form-check-label" for="sort-lowest">
+                                Notes les plus basses
+                            </label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <button id="reset-filters" class="rail-btn-outline w-100">
+                            <i class="fas fa-undo me-2"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card filter-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Statistiques</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>5 étoiles</span>
+                                <span class="badge bg-success rounded-pill" id="stats-five">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" id="progress-five" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>4 étoiles</span>
+                                <span class="badge bg-primary rounded-pill" id="stats-four">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" id="progress-four" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>3 étoiles</span>
+                                <span class="badge bg-warning rounded-pill" id="stats-three">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" id="progress-three" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>2 étoiles</span>
+                                <span class="badge bg-warning rounded-pill" id="stats-two" style="background-color: #ff9800 !important;">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" id="progress-two" style="background-color: #ff9800; width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>1 étoile</span>
+                                <span class="badge bg-danger rounded-pill" id="stats-one">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-danger" id="progress-one" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {# Avis List #}
+            <div class="col-lg-9">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                    <h2 class="mb-3 mb-md-0"><i class="fas fa-comment-dots me-2"></i>Avis Clients</h2>
+                    <div class="input-group w-100 w-md-50">
+                        <input type="text" id="searchInput" class="form-control search-box" placeholder="Rechercher un avis...">
+                        <button class="btn search-btn" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                {% if avis|length > 0 %}
+                <div class="row" id="avisContainer">
+                    {% for a in avis %}
+                        <div class="col-md-6 mb-4 avis-item" data-rating="{{ a.note }}">
+                            <div class="card rail-card h-100 position-relative">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="ticket-id">#AV-{{ a.id|slice(0, 8) }}</div>
+                                    <span class="rating-badge 
+                                        {% if a.note == 5 %}rating-excellent
+                                        {% elseif a.note == 4 %}rating-good
+                                        {% elseif a.note == 3 %}rating-average
+                                        {% elseif a.note == 2 %}rating-poor
+                                        {% else %}rating-bad{% endif %}">
+                                        {{ a.note }}/5
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-placeholder">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0">Utilisateur #{{ a.idUtilisateur }}</h5>
+                                            <small class="avis-date">Posté le {{ a.dateAvis|date('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rating-stars mb-3">
+                                        {% for i in 1..5 %}
+                                            {% if i <= a.note %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <p class="mb-3">{{ a.contenu|slice(0, 150) ~ (a.contenu|length > 150 ? '...' : '') }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ path('app_avis_show', {'id': a.id}) }}" class="btn btn-sm rail-btn-outline">
+                                            <i class="fas fa-eye me-1"></i> Voir détails
+                                        </a>
+                                        <div>
+                                            <a href="{{ path('app_avis_edit', {'id': a.id}) }}" class="btn btn-sm rail-btn-outline me-1">
+                                                <i class="fas fa-edit me-1"></i> Modifier
+                                            </a>
+                                            <button type="button" class="btn btn-sm rail-btn-outline" data-bs-toggle="modal" data-bs-target="#deleteModal{{ a.id }}" style="border-color: var(--danger-color); color: var(--danger-color);">
+                                                <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal de confirmation de suppression -->
+                        <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ a.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color: var(--danger-color); color: white;">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ a.id }}"><i class="fas fa-exclamation-triangle me-2"></i>Confirmer la suppression</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                                        <p class="small text-muted">Cette action est irréversible.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <form method="post" action="{{ path('app_avis_delete', {'id': a.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a.id) }}">
+                                            <button type="submit" class="rail-btn" style="background-color: var(--danger-color);">
+                                                <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state text-center py-5">
+                    <i class="fas fa-comment-slash fa-4x mb-3" style="color: var(--primary-medium);"></i>
+                    <h3 class="mb-3">Aucun avis disponible</h3>
+                    <p class="mb-4">Soyez le premier à partager votre expérience avec nos services.</p>
+                    <a href="{{ path('app_avis_new') }}" class="rail-btn">
+                        <i class="fas fa-plus-circle me-2"></i> Ajouter un avis
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <img src="{{ asset('images/MoveEasy.png') }}" width="50" alt="MoveEasy Logo" class="me-2">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li class="mb-2"><a href="{{ path('app_avis_index') }}" class="text-white text-decoration-none">Avis</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const ratingFilters = document.querySelectorAll('.filter-rating');
+            const sortOptions = document.querySelectorAll('.sort-option');
+            const resetButton = document.getElementById('reset-filters');
+            const avisItems = document.querySelectorAll('.avis-item');
+            
+            // Calculate statistics
+            function updateStatistics() {
+                const ratings = [1, 2, 3, 4, 5];
+                const counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+                
+                avisItems.forEach(item => {
+                    const rating = parseInt(item.dataset.rating);
+                    if (counts[rating] !== undefined) {
+                        counts[rating]++;
+                    }
+                });
+                
+                const total = avisItems.length;
+                
+                ratings.forEach(rating => {
+                    const count = counts[rating] || 0;
+                    const percentage = total > 0 ? (count / total * 100) : 0;
+                    
+                    document.getElementById(`stats-${rating === 5 ? 'five' : rating === 4 ? 'four' : rating === 3 ? 'three' : rating === 2 ? 'two' : 'one'}`).textContent = count;
+                    document.getElementById(`progress-${rating === 5 ? 'five' : rating === 4 ? 'four' : rating === 3 ? 'three' : rating === 2 ? 'two' : 'one'}`).style.width = `${percentage}%`;
+                });
+            }
+            
+            // Filter items based on search and rating
+            function filterItems() {
+                const searchText = searchInput.value.toLowerCase();
+                let selectedRating = '';
+                
+                ratingFilters.forEach(filter => {
+                    if (filter.checked) {
+                        selectedRating = filter.value;
+                    }
+                });
+                
+                avisItems.forEach(item => {
+                    const content = item.querySelector('p').textContent.toLowerCase();
+                    const userName = item.querySelector('h5').textContent.toLowerCase();
+                    const rating = item.dataset.rating;
+                    
+                    const matchesSearch = searchText === '' || 
+                                        content.includes(searchText) || 
+                                        userName.includes(searchText) ||
+                                        item.querySelector('.ticket-id').textContent.toLowerCase().includes(searchText);
+                                        
+                    const matchesRating = selectedRating === '' || rating === selectedRating;
+                    
+                    if (matchesSearch && matchesRating) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                let visibleItems = Array.from(avisItems).filter(item => item.style.display !== 'none');
+                let noResultsElement = document.getElementById('no-results');
+                
+                if (visibleItems.length === 0 && avisItems.length > 0) {
+                    if (!noResultsElement) {
+                        noResultsElement = document.createElement('div');
+                        noResultsElement.id = 'no-results';
+                        noResultsElement.className = 'col-12';
+                        noResultsElement.innerHTML = `
+                            <div class="empty-state text-center py-5">
+                                <i class="fas fa-search fa-4x mb-3" style="color: var(--primary-medium);"></i>
+                                <h3 class="mb-3">Aucun résultat</h3>
+                                <p class="mb-4">Aucun avis ne correspond à vos critères de recherche.</p>
+                                <button id="reset-search" class="rail-btn-outline">
+                                    <i class="fas fa-undo me-2"></i> Réinitialiser la recherche
+                                </button>
+                            </div>
+                        `;
+                        document.getElementById('avisContainer').appendChild(noResultsElement);
+                        
+                        document.getElementById('reset-search').addEventListener('click', function() {
+                            document.getElementById('filter-all').checked = true;
+                            document.getElementById('sort-newest').checked = true;
+                            searchInput.value = '';
+                            filterItems();
+                            sortItems();
+                            noResultsElement.remove();
+                        });
+                    }
+                } else if (noResultsElement) {
+                    noResultsElement.remove();
+                }
+            }
+            
+            // Sort items based on selected option
+            function sortItems() {
+                const container = document.getElementById('avisContainer');
+                const items = Array.from(avisItems);
+                let sortCriteria = '';
+                
+                sortOptions.forEach(option => {
+                    if (option.checked) {
+                        sortCriteria = option.value;
+                    }
+                });
+                
+                items.sort((a, b) => {
+                    const dateA = new Date(a.querySelector('.avis-date').textContent.replace('Posté le ', '').split('/').reverse().join('-'));
+                    const dateB = new Date(b.querySelector('.avis-date').textContent.replace('Posté le ', '').split('/').reverse().join('-'));
+                    const ratingA = parseInt(a.dataset.rating);
+                    const ratingB = parseInt(b.dataset.rating);
+                    
+                    switch(sortCriteria) {
+                        case 'newest':
+                            return dateB - dateA;
+                        case 'oldest':
+                            return dateA - dateB;
+                        case 'highest':
+                            return ratingB - ratingA || dateB - dateA;
+                        case 'lowest':
+                            return ratingA - ratingB || dateB - dateA;
+                        default:
+                            return 0;
+                    }
+                });
+                
+                items.forEach(item => container.appendChild(item));
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', filterItems);
+            
+            ratingFilters.forEach(filter => {
+                filter.addEventListener('change', function() {
+                    filterItems();
+                    sortItems();
+                });
+            });
+            
+            sortOptions.forEach(option => {
+                option.addEventListener('change', sortItems);
+            });
+            
+            resetButton.addEventListener('click', function() {
+                document.getElementById('filter-all').checked = true;
+                document.getElementById('sort-newest').checked = true;
+                searchInput.value = '';
+                filterItems();
+                sortItems();
+            });
+            
+            // Initialize
+            updateStatistics();
+            filterItems();
+            sortItems();  
+        });
+    </script>
+{% endblock %}

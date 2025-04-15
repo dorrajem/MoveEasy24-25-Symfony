@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MoveEasy - Transport accessible{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS (pour la carte) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e9f8f7;
+        }
+
+        .navbar {
+            background-color: #1f6f68;
+        }
+
+        .navbar a, .navbar-brand {
+            color: white;
+        }
+
+        .hero {
+            background: url('/images/train-bg.jpg') no-repeat center center/cover;
+            height: 500px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .section-title {
+            color: #1f6f68;
+        }
+
+        footer {
+            background-color: #1f6f68;
+            color: white;
+            padding: 20px 0;
+        }
+
+        #map {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+<!-- 🔝 Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="{{ asset('images/logo.png') }}" width="40" alt="MoveEasy Logo">
+            MoveEasy
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon text-light"><i class="fas fa-bars"></i></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Réservation</a></li>
+                <li class="nav-item">
+    <a class="nav-link" href="{{ path('app_reclamation_index') }}">Réclamations</a>
+</li>
+                <li class="nav-item"><a class="nav-link" href="#">Avis</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Stations</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Trains</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Itinéraires</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Connexion</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 🎯 Hero Section -->
+<div class="hero">
+    <div>
+        <h1>Bienvenue sur MoveEasy</h1>
+        <p>Transport ferroviaire accessible pour tous</p>
+        <a href="#" class="btn btn-light mt-3">Réserver maintenant</a>
+    </div>
+</div>
+
+<!-- 🛠️ Services -->
+<section class="container py-5">
+    <h2 class="text-center section-title mb-4">Nos Services</h2>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <i class="fas fa-ticket fa-3x text-success mb-3"></i>
+            <h5>Réservation Rapide</h5>
+            <p>Réservez vos trajets en toute simplicité.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-wheelchair fa-3x text-success mb-3"></i>
+            <h5>Accessibilité Garantie</h5>
+            <p>Des équipements pour tous les profils de voyageurs.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-comment-dots fa-3x text-success mb-3"></i>
+            <h5>Avis & Réclamations</h5>
+            <p>Partagez votre expérience ou signalez un problème.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 🗺️ Map Section -->
+<section class="container mb-5">
+    <h2 class="text-center section-title mb-4">Nos stations</h2>
+    <div id="map"></div>
+</section>
+
+<!-- 💬 Témoignages -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center section-title mb-4">Ce que disent nos utilisateurs</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <blockquote class="blockquote">
+                    <p class="mb-0">“MoveEasy m’a permis de voyager sans stress. Bravo !”</p>
+                    <footer class="blockquote-footer">Sami, Tunis</footer>
+                </blockquote>
+            </div>
+            <div class="col-md-6">
+                <blockquote class="blockquote">
+                    <p class="mb-0">“Les équipements sont vraiment adaptés. Merci !”</p>
+                    <footer class="blockquote-footer">Fatma, Sousse</footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 📞 Footer -->
+<footer class="text-center">
+    <p>&copy; {{ "now"|date("Y") }} MoveEasy - Tous droits réservés.</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    // 🗺️ Initialisation de la carte Leaflet
+    var map = L.map('map').setView([36.8, 10.2], 7); // Zoom sur la Tunisie
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Exemple : Ajout de stations
+    L.marker([36.8065, 10.1815]).addTo(map).bindPopup('Tunis Station');
+    L.marker([35.8256, 10.6084]).addTo(map).bindPopup('Sousse Station');
+</script>
+
+{% block javascripts %}{% endblock %}
+
+</body>
+</html>
