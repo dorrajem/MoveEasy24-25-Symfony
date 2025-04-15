@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Train{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <a href="{{ path('front_train_list') }}" class="btn btn-outline-secondary mb-4"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">🚆 {{ train.TypeTrain }}</h3>
+            <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item"><strong>Capacité:</strong> {{ train.capacite }}</li>
+                <li class="list-group-item"><strong>Statut:</strong>
+                    <span class="badge {{
+                        train.statut == 'En service' ? 'bg-success' :
+                        (train.statut == 'En maintenance' ? 'bg-primary' : 'bg-danger')
+                    }}">
+                        {{ train.statut }}
+                    </span>
+                </li>
+                <li class="list-group-item"><strong>Date de mise en service:</strong> {{ train.dateMiseEnService|date('d/m/Y') }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

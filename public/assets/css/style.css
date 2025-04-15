@@ -1,0 +1,130 @@
+/* GREEN THEME OVERRIDE */
+:root {
+  --bs-primary: #28a745;
+  --green-main: #28a745;
+  --green-dark: #1e7e34;
+  --green-light: #e6f4ea;
+}
+
+body {
+  background: #e6f4ea;
+}
+
+/* Links */
+a,
+a:hover,
+.breadcrumb a:hover,
+.nav-tabs-bordered .nav-link:hover,
+.nav-tabs-bordered .nav-link.active,
+.sidebar-nav .nav-link,
+.sidebar-nav .nav-link i,
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link:hover i,
+.sidebar-nav .nav-content a:hover,
+.sidebar-nav .nav-content a.active,
+.sidebar-nav .nav-content a.active i,
+.header .toggle-sidebar-btn,
+.header .search-form button i,
+.header-nav .nav-icon,
+.header-nav .nav-profile,
+.profile .profile-card .social-links a:hover,
+.dashboard .filter .icon:hover,
+.faq .basic h6,
+.contact .info-box i,
+.contact .php-email-form input:focus,
+.contact .php-email-form textarea:focus,
+.contact .php-email-form button[type=submit],
+.contact .php-email-form button[type=submit]:hover,
+.error-404 h1,
+.error-404 .btn,
+.error-404 .btn:hover,
+.footer .copyright,
+.footer .credits {
+  color: #28a745 !important;
+}
+
+/* Buttons and Primary Backgrounds */
+.btn-primary,
+.back-to-top,
+.nav-tabs-bordered .nav-link.active,
+.sidebar-nav .nav-link,
+.dashboard .sales-card .card-icon,
+.dashboard .top-selling .table thead,
+.contact .php-email-form button[type=submit],
+.error-404 .btn {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+.btn-primary:hover,
+.back-to-top:hover,
+.contact .php-email-form button[type=submit]:hover,
+.error-404 .btn:hover {
+  background-color: #1e7e34 !important;
+  border-color: #1c7430 !important;
+}
+
+/* Card and Table Enhancements */
+.card,
+.card-header,
+.card-footer,
+.table thead {
+  background-color: #f0fdf4 !important;
+  color: #14532d !important;
+}
+
+/* Sidebar */
+.sidebar-nav .nav-link.collapsed,
+.sidebar-nav .nav-link.collapsed i {
+  color: #14532d !important;
+}
+
+.sidebar-nav .nav-heading {
+  color: #81c784 !important;
+}
+
+/* Misc */
+.accordion-button:not(.collapsed) {
+  background-color: #d1fae5 !important;
+  color: #14532d !important;
+}
+
+.accordion-flush .accordion-button:not(.collapsed) {
+  color: #28a745 !important;
+}
+
+.profile .profile-overview .card-title,
+.profile .profile-overview .label,
+.profile .profile-edit label {
+  color: #14532d !important;
+}
+
+.contact .info-box h3,
+.pagetitle h1 {
+  color: #14532d !important;
+}
+
+/* Footer */
+.footer {
+  border-top-color: #c8e6c9 !important;
+}
+
+/* Update text-muted blue tones */
+.text-muted,
+.text-secondary {
+  color: #4caf50 !important;
+}
+
+/* Badge example override */
+.badge-primary {
+  background-color: #28a745 !important;
+}
+
+/* Adjust icons in cards */
+.dashboard .card-icon {
+  color: #28a745 !important;
+  background-color: #e6f4ea !important;
+}
+
+/* Remove conflicting previous colors */
+/* Already overridden above */

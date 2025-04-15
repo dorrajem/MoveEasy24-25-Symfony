@@ -1,0 +1,82 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Liste des Trains{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h4"><i class="fas fa-train me-2"></i>Liste des Trains</h1>
+        <a href="{{ path('app_train_new') }}" class="btn btn-success btn-sm px-3 py-1">
+            <i class="fas fa-plus me-1"></i> Ajouter un train
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-center small">
+                    <tr>
+                        <th>Type</th>
+                        <th>Capacité</th>
+                        <th>Statut</th>
+                        <th>Date de mise en service</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for train in trains %}
+                    <tr>
+                        <td class="text-center small">{{ train.TypeTrain }}</td>
+                        <td class="text-center small">{{ train.capacite }}</td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill 
+                                {{ train.statut == 'En service' ? 'bg-success' : 
+                                   (train.statut == 'En maintenance' ? 'bg-primary' : 'bg-danger') }}">
+                                {{ train.statut == 'En service' ? '✅' : 
+                                   (train.statut == 'En maintenance' ? '🛠️' : '❌') }}
+                                {{ train.statut }}
+                            </span>
+                        </td>
+                        <td class="text-center small">{{ train.dateMiseEnService ? train.dateMiseEnService|date('d/m/Y') : '-' }}</td>
+                        <td class="text-center">
+                            <div class="btn-group-vertical w-100 gap-1">
+                                <a href="{{ path('app_train_show', {idTrain: train.idTrain}) }}" class="btn btn-outline-info btn-sm w-100 py-1 px-2">
+                                    <i class="fas fa-eye me-1"></i> Voir
+                                </a>
+                                <a href="{{ path('app_train_edit', {idTrain: train.idTrain}) }}" class="btn btn-outline-warning btn-sm w-100 py-1 px-2">
+                                    <i class="fas fa-edit me-1"></i> Modifier
+                                </a>
+                                <a href="{{ path('app_maintenance_train_by_train', {idTrain: train.idTrain}) }}" class="btn btn-outline-primary btn-sm w-100 py-1 px-2">
+                                    <i class="fas fa-tools me-1"></i> Maintenances
+                                </a>
+                                <a href="{{ path('app_maintenance_train_new', {idTrain: train.idTrain}) }}" class="btn btn-outline-success btn-sm w-100 py-1 px-2">
+                                    <i class="fas fa-plus me-1"></i> Ajouter maintenance
+                                </a>
+                                <form method="post" action="{{ path('app_train_delete', {idTrain: train.idTrain}) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr ?');" class="w-100">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ train.idTrain) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1 px-2">
+                                        <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4 small">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                            Aucun train trouvé.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center my-4">
+        {{ knp_pagination_render(trains, 'bundles/bootstrap_v5_pagination.html.twig') }}
+    </div>
+</div>
+{% endblock %}

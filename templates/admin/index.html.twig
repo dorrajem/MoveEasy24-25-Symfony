@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MoveEasy{% endblock %}</title>
+    
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <!-- Your existing support center styles -->
+        <style>
+            :root {
+                --primary-color: #0B5351;    /* Dark teal */
+                --primary-medium: #00A896;   /* Medium teal */
+                --primary-light: #99D5CF;    /* Light teal */
+                --secondary-color: #0B5351;  /* Using primary dark as secondary */
+                --accent-color: #F3752B;     /* Complementary orange for contrast */
+                --success-color: #2E8B57;    /* SeaGreen */
+                --warning-color: #FFC857;    /* Amber */
+                --danger-color: #E63946;     /* Red */
+                --text-dark: #2A2D34;        /* Dark grey for text */
+                --text-light: #F8F9FA;       /* Light color for text on dark backgrounds */
+                --background-light: #F8F9FA; /* Light background */
+                --background-medium: #E9ECEF; /* Medium light background */
+            }
+            
+            /* Base rail styles that will apply across the application */
+            .rail-banner {
+                background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75));
+                background-size: cover;
+                background-position: center;
+                color: white;
+                padding: 80px 0;
+                margin-bottom: 40px;
+                position: relative;
+            }
+            
+            .rail-card {
+                border-radius: 8px;
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border-left: 4px solid var(--primary-color);
+                overflow: hidden;
+            }
+            
+            .rail-btn {
+                background-color: var(--primary-medium);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 24px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Add other base styles that should apply across your application */
+        </style>
+    {% endblock %}
+    
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        <!-- Any global JS you need -->
+    {% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <header class="rail-header">
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path('app_home') }}">
+                    <i class="fas fa-train me-2"></i>
+                    <span class="fw-bold">MoveEasy</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_support_index') }}">Support</a>
+                        </li>
+                        <!-- Add more navigation items as needed -->
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        {% if app.user %}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user-circle me-1"></i>
+                                    {{ app.user.username }}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ path('app_profile') }}">Profil</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-light me-2">Connexion</a>
+                            <a href="{{ path('app_register') }}" class="rail-btn">Inscription</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        {% block breadcrumbs %}
+            <!-- Optional breadcrumb block -->
+        {% endblock %}
+        
+        {% include 'includes/_flash_messages.html.twig' %}
+        
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="rail-footer py-4 mt-5" style="background-color: var(--primary-color); color: white;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="mb-3">MoveEasy</h5>
+                    <p>Votre solution de voyage en train simplifiée.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">Liens rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ path('app_support_index') }}" class="text-white">Support</a></li>
+                        <li><a href="#" class="text-white">Conditions d'utilisation</a></li>
+                        <li><a href="#" class="text-white">Politique de confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> contact@moveeasy.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +33 1 23 45 67 89</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="text-center">
+                <small>&copy; {{ 'now'|date('Y') }} MoveEasy. Tous droits réservés.</small>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

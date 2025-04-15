@@ -1,0 +1,85 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Modifier la maintenance #{{ maintenance.idMaintenance }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="h3 mb-4"><i class="fas fa-edit me-2"></i>Modifier la maintenance #{{ maintenance.idMaintenance }}</h1>
+
+    <!-- Train Info Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light fw-semibold">
+            <i class="fas fa-train me-2"></i>Informations du train
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">🧾 Type :</dt>
+                <dd class="col-sm-8">{{ maintenance.train.typeTrain }}</dd>
+
+                <dt class="col-sm-4">👥 Capacité :</dt>
+                <dd class="col-sm-8">{{ maintenance.train.capacite }}</dd>
+
+                <dt class="col-sm-4">⚙️ Statut :</dt>
+                <dd class="col-sm-8">
+                    <span class="badge rounded-pill 
+                        {{ maintenance.train.statut == 'En service' ? 'bg-success' : 
+                        (maintenance.train.statut == 'En maintenance' ? 'bg-primary' : 'bg-danger') }}">
+                        {{ maintenance.train.statut }}
+                    </span>
+                </dd>
+
+                <dt class="col-sm-4">📅 Mise en service :</dt>
+                <dd class="col-sm-8">{{ maintenance.train.dateMiseEnService|date('d/m/Y') }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Maintenance Form -->
+    {{ form_start(form, {
+        'attr': {
+            'class': 'needs-validation',
+            'novalidate': 'novalidate'
+        }
+    }) }}
+
+        <div class="mb-3">
+            {{ form_label(form.dateMaintenance, 'Date de maintenance', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+            {{ form_widget(form.dateMaintenance, {
+                'attr': {
+                    'class': 'form-control',
+                    'min': "now"|date('Y-m-d')
+                }
+            }) }}
+            {{ form_errors(form.dateMaintenance) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description de la maintenance', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+            {{ form_widget(form.description, {
+                'attr': {
+                    'class': 'form-control',
+                    'rows': '3',
+                    'placeholder': 'Ex. : Changement de freins, vérification moteur...'
+                }
+            }) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.statut, 'Statut de la maintenance', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.statut) }}
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('app_maintenance_train_by_train', {'idTrain': maintenance.train.idTrain}) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Mettre à jour
+            </button>
+        </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

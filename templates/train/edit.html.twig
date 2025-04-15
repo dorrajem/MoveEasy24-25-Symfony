@@ -1,0 +1,81 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Modifier le Train{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="h3 mb-4"><i class="fas fa-edit me-2"></i>Modifier le train</h1>
+
+    <div class="card shadow-sm border-warning">
+        <div class="card-header bg-warning bg-opacity-25 fw-semibold">
+            <i class="fas fa-train me-2"></i>Formulaire de modification
+        </div>
+        <div class="card-body">
+            {{ form_start(form, {
+                'attr': {
+                    'novalidate': 'novalidate',
+                    'class': 'needs-validation'
+                }
+            }) }}
+
+                <div class="mb-3">
+                    {{ form_label(form.TypeTrain, 'Type de train', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(form.TypeTrain, {
+                        'attr': {
+                            'class': 'form-control',
+                            'minlength': 2,
+                            'maxlength': 255,
+                            'placeholder': 'Ex : TGV, TER...'
+                        }
+                    }) }}
+                    {{ form_errors(form.TypeTrain) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.capacite, 'Capacité', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(form.capacite, {
+                        'attr': {
+                            'class': 'form-control',
+                            'min': 1,
+                            'step': 1,
+                            'placeholder': 'Ex : 400'
+                        }
+                    }) }}
+                    {{ form_errors(form.capacite) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(form.statut, {
+                        'attr': {
+                            'class': 'form-select'
+                        }
+                    }) }}
+                    {{ form_errors(form.statut) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.dateMiseEnService, 'Date de mise en service', {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                    {{ form_widget(form.dateMiseEnService, {
+                        'attr': {
+                            'class': 'form-control',
+                            'max': "now"|date('Y-m-d')
+                        }
+                    }) }}
+                    {{ form_errors(form.dateMiseEnService) }}
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ path('app_train_index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i> Modifier
+                    </button>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

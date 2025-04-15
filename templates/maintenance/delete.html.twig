@@ -1,0 +1,46 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Maintenance du Train{% endblock %}
+
+{% block body %}
+<h1>Maintenances pour le Train #{{ train.idTrain }}</h1>
+
+{% if train.statut == 'Hors service' %}
+    <a href="{{ path('app_maintenancetrain_add', {'idTrain': train.idTrain}) }}" class="btn btn-success">Ajouter une Maintenance</a>
+{% elseif train.statut == 'En service' %}
+    <a href="{{ path('app_maintenancetrain_add', {'idTrain': train.idTrain}) }}" class="btn btn-success">Ajouter une Maintenance (Planifiée ou Terminée)</a>
+{% elseif train.statut == 'En maintenance' %}
+    <a href="{{ path('app_maintenancetrain_add', {'idTrain': train.idTrain}) }}" class="btn btn-success">Ajouter une Maintenance</a>
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for maintenance in maintenances %}
+        <tr>
+            <td>{{ maintenance.dateMaintenance ? maintenance.dateMaintenance|date('d/m/Y') : '' }}</td>
+            <td>{{ maintenance.description }}</td>
+            <td>{{ maintenance.statut }}</td>
+            <td>
+                <a href="{{ path('app_maintenancetrain_edit', {'idTrain': maintenance.train.idTrain, 'id': maintenance.idMaintenance}) }}" class="btn btn-warning">Modifier</a>
+                
+                <form method="post" action="{{ path('app_maintenancetrain_delete', {'idTrain': maintenance.train.idTrain, 'id': maintenance.idMaintenance}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette maintenance ?');">
+                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">Aucune maintenance trouvée.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
