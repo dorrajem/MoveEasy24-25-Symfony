@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Train Reservation System{% endblock %}</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    
+    {# Bootstrap CSS #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {# Font Awesome for icons #}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    {# Animate.css for smooth animations #}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+
+    {# Custom Styles #}
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.0/dist/sweetalert2.min.css" rel="stylesheet">
+    
+    {% block stylesheets %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .riot-btn {
+            background-color: #009688;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .riot-btn:hover {
+            background-color: #00796b;
+            box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+            transform: scale(1.05);
+        }
+
+        .card-header {
+            background: #00796b;
+            color: white;
+            border-bottom: 2px solid #00675b;
+        }
+
+        .card-body {
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+        
+        /* More style enhancements */
+        .category-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            background-color: #e3f2fd;
+            color: #1e88e5;
+            border-radius: 50%;
+        }
+
+        .riot-banner {
+            background: linear-gradient(90deg, #009688 0%, #00796b 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00796b;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #004d40;
+        }
+
+        /* Navigation styles */
+        .navbar {
+            background: linear-gradient(90deg, #009688 0%, #00796b 100%) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer styles */
+        .footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Alert styles */
+        .alert {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        /* Form & validation styles */
+        .text-danger {
+            color: #dc3545 !important;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .form-control.is-invalid,
+        .was-validated .form-control:invalid {
+            border-color: #dc3545;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        /* Reservation specific styles */
+        .reservation-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Button standard styles */
+        .btn-primary {
+            background-color: #009688;
+            border-color: #009688;
+        }
+
+        .btn-primary:hover {
+            background-color: #00796b;
+            border-color: #00796b;
+            box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+        }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item:hover {
+            background-color: #e8f5e9;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('app_front_reservation_index') }}">
+                <i class="fas fa-train me-2"></i>Train Reservation
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_front_reservation_index') }}">
+                            <i class="fas fa-list me-1"></i>Mes Réservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_front_reservation_new') }}">
+                            <i class="fas fa-plus me-1"></i>Nouvelle Réservation
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <!-- Placeholder for user menu - you can expand this later -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Mon Compte
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle me-1"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-1"></i>Paramètres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-1"></i>Déconnexion</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            {% for message in app.flashes('frontoffice_success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
+            {% for message in app.flashes('frontoffice_error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
+            {% for message in app.flashes('frontoffice_warning') %}
+                <div class="alert alert-warning">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Train Reservation System</h5>
+                    <p>Réservez votre voyage en train facilement et rapidement.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Liens Rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ path('app_front_reservation_index') }}" class="text-decoration-none" style="color: #009688;"><i class="fas fa-chevron-right me-1"></i>Mes Réservations</a></li>
+                        <li><a href="{{ path('app_front_reservation_new') }}" class="text-decoration-none" style="color: #009688;"><i class="fas fa-chevron-right me-1"></i>Nouvelle Réservation</a></li>
+                        <li><a href="#" class="text-decoration-none" style="color: #009688;"><i class="fas fa-chevron-right me-1"></i>Aide & Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2" style="color: #009688;"></i>contact@train-reservation.com</li>
+                        <li><i class="fas fa-phone me-2" style="color: #009688;"></i>+33 1 23 45 67 89</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; {% if "now"|date("Y") == "2024" %}2024{% else %}2024-{{ "now"|date("Y") }}{% endif %} Train Reservation System. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    {# Bootstrap JS Bundle with Popper #}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {# SweetAlert2 for nice popups #}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.0/dist/sweetalert2.all.min.js"></script>
+    
+    {% block javascripts %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Example SweetAlert2 trigger for success messages
+                const successMessage = "{{ app.session.get('success') }}";
+                if (successMessage) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Réservation enregistrée!',
+                        text: successMessage,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        </script>
+    {% endblock %}
+</body>
+</html>

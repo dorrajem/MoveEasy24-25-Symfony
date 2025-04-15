@@ -1,0 +1,435 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Réservation {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .riot-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .riot-banner {
+            background: linear-gradient(90deg, #009688 0%, #00796b 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .bg-success-light {
+            background-color: rgba(0, 150, 136, 0.15);
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--primary-medium);
+        }
+
+        .timeline-item::after {
+            content: "";
+            position: absolute;
+            left: 12px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary-medium);
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .status-Confirmé { background-color: #4caf50; color: #0a3c0f; }
+.status-En_attente { background-color: #ffb74d; color: #502c00; }
+.status-Annulé { background-color: #e53935; color: #fff; }
+        
+        .riot-btn {
+            background-color: #009688;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease-in-out;
+        }
+        .riot-btn:hover {
+            background-color: #00796b;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 150, 136, 0.3);
+            transform: scale(1.05);
+        }
+        .btn-update {
+            background-color: #1e88e5;
+            color: white;
+        }
+        .btn-update:hover {
+            background-color: #1565c0;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #e53935;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c62828;
+            color: white;
+        }
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: #e3f2fd;
+            color: #009688;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 20px;
+        }
+        .timeline:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: -37px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #009688;
+            border: 2px solid #fff;
+        }
+        .timeline-date {
+            color: #757575;
+            font-size: 0.9rem;
+        }
+        
+        /* Reservation specific styles */
+        .card-header {
+            background: #00796b;
+            color: white;
+            border-bottom: 2px solid #00675b;
+        }
+        
+        .card-body {
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .reservation-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #009688;
+            transition: all 0.3s ease;
+        }
+        
+        .reservation-info:hover {
+            background-color: #e8f5e9;
+            box-shadow: 0 4px 8px rgba(0, 150, 136, 0.15);
+            transform: translateX(3px);
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #00796b;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .avatar-container {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .action-button {
+            transition: all 0.3s ease;
+        }
+        
+        .action-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .paiement-section {
+            border-top: 1px dashed #00796b;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Banner #}
+    <div class="riot-banner">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-container">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div>
+                        <h1>Réservation </h1>
+                        <p class="lead">{{ reservation.dateR|date('d/m/Y') }} à {{ reservation.heureR|date('H:i') }}</p>
+                    </div>
+                </div>
+                <span class="status-badge 
+                    {% if reservation.etatR == 'Confirmé' %}status-Confirmé
+                    {% elseif reservation.etatR == 'En_attente' %}status-En_attente
+                    {% else %}status-Annulé{% endif %}">
+                    {{ reservation.etatR }}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mb-5">
+        {# Flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="mb-4">
+            <a href="{{ path('app_front_reservation_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à mes réservations
+            </a>
+        </div>
+        
+        <div class="row">
+            {# Main details #}
+            <div class="col-lg-8">
+                <div class="card riot-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Détails du Reservation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="category-icon">
+                                <i class="fas fa-train"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0">{{ reservation.destinationR }}</h4>
+                                <p class="text-muted mb-0">Type de train: {{ reservation.typeTrainR }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="reservation-info">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="info-label">Destination:</span>
+                                        <span class="info-value">{{ reservation.destinationR }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="reservation-info">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="info-label">Type de Train:</span>
+                                        <span class="info-value">{{ reservation.typeTrainR }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="reservation-info">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="info-label">Nombre de Places:</span>
+                                        <span class="info-value">{{ reservation.nbrplace }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="reservation-info">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="info-label">Type de Place:</span>
+                                        <span class="info-value">{{ reservation.typeplace }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="reservation-info">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="info-label">Nom d'utilisateur:</span>
+                                        <span class="info-value">{{ reservation.NameUser }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if paiement %}
+                            <div class="paiement-section">
+                                <h5 class="fw-bold mb-3">Informations de paiement</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="reservation-info">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="info-label">Méthode de Paiement:</span>
+                                                <span class="info-value">{{ paiement.methodeP }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="reservation-info">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="info-label">Statut du Paiement:</span>
+                                                <span class="status-badge {% if paiement.statutP == 'Confirmé' %}status-Confirmé{% elseif paiement.statutP == 'En_attente' %}status-En_attente{% else %}status-Annulé{% endif %}">
+                                                    {{ paiement.statutP }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning mt-4">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="alert-heading">Aucun paiement</h5>
+                                        <p>Aucune information de paiement n'est disponible pour cette réservation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        
+                    </div>
+                </div>
+            </div>
+
+            {# Sidebar details #}
+            <div class="col-lg-4">
+                {# Status Card #}
+                <div class="card riot-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Statut</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column">
+                            <div class="mb-3">
+                                <strong>Statut actuel:</strong>
+                                <span class="status-badge ms-2
+                                    {% if reservation.etatR == 'Confirmé' %}status-Confirmé 
+                                    {% elseif reservation.etatR == 'En_attente' %}status-En_attente
+                                    {% else %}status-Annulé{% endif %}">
+                                    {{ reservation.etatR }}
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Date de voyage:</strong>
+                                <span>{{ reservation.dateR|date('d/m/Y') }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Heure de départ:</strong>
+                                <span>{{ reservation.heureR|date('H:i') }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Voyageur:</strong>
+                                <span>{{ reservation.NameUser }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card riot-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ path('app_front_reservation_index') }}" class="btn riot-btn">
+                                <i class="fas fa-list me-2"></i>Mes réservations
+                            </a>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips if needed
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+{% endblock %}
