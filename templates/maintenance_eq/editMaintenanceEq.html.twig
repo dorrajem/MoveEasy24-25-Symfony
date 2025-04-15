@@ -1,0 +1,47 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Modifier une Maintenance{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="container form-section mt-4">
+        <div class="form-header mb-4">
+            <h2 class="mb-0">Modifier une Maintenance</h2>
+        </div>
+
+        {{ form_start(form) }}
+
+        <div class="mb-3">
+            {{ form_label(form.idEquipement, 'Équipement associé') }}
+            {{ form_widget(form.idEquipement, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.idEquipement) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.description, 'Description') }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.periode, 'Période') }}
+            {{ form_widget(form.periode, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.periode) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.dateMaintenance, 'Date de maintenance') }}
+            {{ form_widget(form.dateMaintenance, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.dateMaintenance) }}
+        </div>
+
+        <div class="text-end mt-4">
+            <button type="submit" class="btn rail-btn">Modifier</button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+

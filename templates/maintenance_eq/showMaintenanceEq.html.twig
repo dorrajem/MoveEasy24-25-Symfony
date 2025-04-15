@@ -1,0 +1,54 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Liste des Maintenances{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">📋 Liste des Maintenances</h2>
+            <a href="{{ path('add_maintenance') }}" class="btn rail-btn">
+                <i class="fas fa-plus-circle me-1"></i> Ajouter Maintenance
+            </a>
+        </div>
+
+        {% if maintenances is not empty %}
+            <div class="row">
+                {% for maintenance in maintenances %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    {{ maintenance.idEquipement.typeEquipement }}
+                                     {{ maintenance.idEquipement.idTrain ?? 'Non défini' }}
+                                </h5>
+                                <p class="card-text">
+                                    <strong>Description :</strong> {{ maintenance.description ?? 'Non défini' }}<br>
+                                    <strong>Période :</strong> {{ maintenance.periode ?? 'Non définie' }}<br>
+                                    <strong>Date :</strong> {{ maintenance.dateMaintenance ? maintenance.dateMaintenance|date('d/m/Y') : 'Non définie' }}
+                                </p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ path('edit_maintenance', {'idMaintenance': maintenance.idMaintenance}) }}" class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <form method="post" action="{{ path('delete_maintenance', {'idMaintenance': maintenance.idMaintenance}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette maintenance ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maintenance.idMaintenance) }}">
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">Aucune maintenance trouvée.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+

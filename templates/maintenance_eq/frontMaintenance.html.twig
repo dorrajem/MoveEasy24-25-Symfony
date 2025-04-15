@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Historique des Maintenances</h2>
+
+    <table class="table table-bordered table-striped table-hover shadow">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Équipement</th>
+                <th>Description</th>
+                <th>Période</th>
+                <th>Date de maintenance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in maintenances %}
+                <tr>
+                    <td>{{ m.idEquipement.typeEquipement }} - Train n°{{ m.idEquipement.idTrain }}</td>
+                    <td>{{ m.description }}</td>
+                    <td>{{ m.periode }}</td>
+                    <td>{{ m.dateMaintenance ? m.dateMaintenance|date('d/m/Y') : 'Non définie' }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">Aucune maintenance enregistrée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

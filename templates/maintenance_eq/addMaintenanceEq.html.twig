@@ -1,0 +1,50 @@
+{% extends 'base_back.html.twig' %}
+
+{% block title %}Ajouter une Maintenance{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-lg border-0" style="border-left: 6px solid var(--primary-medium);">
+        <div class="card-header py-4 text-white text-center" style="background-color: var(--primary-color); border-radius: 0.5rem 0.5rem 0 0;">
+            <h3 class="mb-0">🛠️ Nouvelle Maintenance</h3>
+            <p class="mb-0" style="font-size: 0.95rem; color: var(--primary-light);">Veuillez remplir les informations ci-dessous</p>
+        </div>
+
+        <div class="card-body p-5" style="background-color: var(--background-light);">
+            {{ form_start(form) }}
+
+            <div class="mb-4">
+                {{ form_label(form.idEquipement, 'Équipement concerné', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.idEquipement, {'attr': {'class': 'form-control py-2'}}) }}
+                {{ form_errors(form.idEquipement) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control py-2'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.periode, 'Période', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.periode, {'attr': {'class': 'form-control py-2'}}) }}
+                {{ form_errors(form.periode) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.dateMaintenance, 'Date de maintenance', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                {{ form_widget(form.dateMaintenance, {'attr': {'class': 'form-control py-2'}}) }}
+                {{ form_errors(form.dateMaintenance) }}
+            </div>
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-lg text-white px-4" style="background-color: var(--accent-color);">
+                    <i class="fas fa-plus-circle me-2"></i> Enregistrer Maintenance
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

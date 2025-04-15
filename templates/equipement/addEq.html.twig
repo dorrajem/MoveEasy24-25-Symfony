@@ -1,0 +1,67 @@
+{% extends 'base_back.html.twig' %}
+{% block body %}
+    <div class="rail-banner">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Ajouter un Équipement</h1>
+            <p class="lead">Ajoutez un équipement au système MoveEasy</p>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="form-section">
+                    <div class="form-header">
+                        <h2 class="mb-0">Formulaire d'Équipement</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ form_start(form) }}
+
+                        <div class="form-group mb-3">
+                            {{ form_label(form.typeEquipement, 'Type d\'équipement') }}
+                            {{ form_widget(form.typeEquipement, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.typeEquipement) }}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            {{ form_label(form.idTrain, 'Train associé') }}
+                            {{ form_widget(form.idTrain, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.idTrain) }}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            {{ form_label(form.quantiteDisponible, 'Quantité disponible') }}
+                            {{ form_widget(form.quantiteDisponible, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.quantiteDisponible) }}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            {{ form_label(form.statut, 'Statut') }}
+                            {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.statut) }}
+                        </div>
+
+                        <div class="form-group mt-4 text-end">
+                            <button type="submit" class="rail-btn">
+                                <i class="fas fa-paper-plane me-2"></i>Enregistrer
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
