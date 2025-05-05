@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des maintenances{% endblock %}
+
+{% block body %}
+    <!-- ✅ Bandeau supérieur -->
+    <div class="rail-banner bg-success text-white py-3 mb-4">
+        <div class="container d-flex align-items-center gap-3">
+            <i class="fas fa-tools fa-2x"></i>
+            <div>
+                <h1 class="h4 fw-bold mb-0">Historique des maintenances</h1>
+                <small>Équipement : {{ equipement.typeEquipement }}</small><br>
+                <small>Train n° {{ equipement.idTrain ?? 'Non défini' }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Tableau des maintenances -->
+    <div class="container">
+        {% if maintenances is not empty %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle shadow">
+                    <thead class="table-success text-center">
+                        <tr>
+                            <th>Date</th>
+                            <th>Période</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for maintenance in maintenances %}
+                            <tr>
+                                <td class="text-center">{{ maintenance.dateMaintenance|date('d/m/Y') }}</td>
+                                <td class="text-center">{{ maintenance.periode }}</td>
+                                <td>{{ maintenance.description }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                Aucune maintenance enregistrée pour cet équipement.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

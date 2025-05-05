@@ -1,0 +1,160 @@
+{# partials/_styles.html.twig #}
+
+
+  body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e9f8f7;
+            padding-top: 70px; /* Espace pour la navbar fixe */
+        }
+        /* Navbar améliorée */
+        .navbar {
+            background-color: rgba(31, 111, 104, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar.scrolled {
+            padding: 5px 0;
+            background-color: rgba(31, 111, 104, 0.98);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-brand {
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #e9f8f7;
+        }
+        .navbar-brand img {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover img {
+            transform: rotate(10deg);
+        }
+        .nav-link {
+            color: white;
+            font-weight: 500;
+            margin: 0 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: #1f6f68;
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            color: #1f6f68;
+            background-color: white;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: transparent;
+            color: white;
+            padding: 0;
+        }
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        .navbar-toggler-icon {
+            background-image: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        /* Reste de vos styles (carousel, testimonials, etc.) inchangé */
+        .section-title {
+            color: #1f6f68;
+        }
+        footer {
+            background-color: #1f6f68;
+            color: white;
+            padding: 20px 0;
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+        }
+
+
+        #heroCarousel {
+        height: 100vh;
+        min-height: 600px;
+        margin-top: -70px; /* Ajustez si votre navbar a une hauteur différente */
+    }
+    
+    .carousel-item {
+        height: 100%;
+    }
+    
+    .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+        filter: brightness(0.7); /* Ajustez (0.5 à 1) pour l'intensité de l'assombrissement */
+    }
+    
+    .carousel-caption {
+        bottom: 30%;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .carousel-indicators button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin: 0 8px;
+        background-color: rgba(255,255,255,0.5);
+    }
+    
+    .carousel-indicators .active {
+        background-color: white;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        #heroCarousel {
+            height: 80vh;
+            min-height: 500px;
+        }
+        
+        .carousel-caption h1 {
+            font-size: 2rem !important;
+        }
+        
+        .carousel-caption p {
+            font-size: 1rem !important;
+        }
+        
+        .carousel-caption .btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+    }

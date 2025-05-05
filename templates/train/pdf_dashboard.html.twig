@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        h1 { color: #0B8457; text-align: center; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background-color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <h1>🚆 Tableau de Bord - Trains</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Statut</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>En Service</td>
+                <td>{{ enService }}</td>
+            </tr>
+            <tr>
+                <td>En Maintenance</td>
+                <td>{{ enMaintenance }}</td>
+            </tr>
+            <tr>
+                <td>Hors Service</td>
+                <td>{{ horsService }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Derniers Trains Ajoutés</h2>
+    <table>
+        <thead>
+            <tr>
+               
+                <th>Type</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for train in latestTrains %}
+                <tr>
+                    <td>{{ train.TypeTrain }}</td>
+                    <td>{{ train.statut }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Aucun train trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

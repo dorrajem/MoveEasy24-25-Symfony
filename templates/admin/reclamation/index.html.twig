@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des réclamations{% endblock %}
+
+{# Optionnel: Ajouter du CSS spécifique si nécessaire, idéalement dans un fichier CSS séparé #}
+{% block stylesheets %}
+    {{ parent() }}
+    {# Assurez-vous que Font Awesome est chargé, par exemple via Webpack Encore ou un CDN dans base.html.twig #}
+    {# <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.x.x/css/all.min.css"> #}
+    <style>
+        /* Exemple de style personnalisé si les variables CSS ne sont pas définies globalement via Bootstrap */
+        /* Assurez-vous que ces variables sont définies quelque part (ex: :root dans votre CSS principal) */
+         :root {
+               --primary-color: #0B5351;    /* Dark teal */
+    --primary-medium: #00A896;   /* Medium teal */
+    --primary-light: #99D5CF;    /* Light teal */
+    --secondary-color: #0B5351;  /* Using primary dark as secondary */
+    --accent-color: #F3752B;     /* Complementary orange for contrast */
+    --success-color: #2E8B57;    /* SeaGreen */
+    --warning-color: #FFC857;    /* Amber */
+    --danger-color: #E63946;     /* Red */
+    --text-dark: #2A2D34;        /* Dark grey for text */
+    --text-light: #F8F9FA;       /* Light color for text on dark backgrounds */
+    --background-light: #F8F9FA; /* Light background */
+    --background-medium: #E9ECEF; /* Medium light background */
+        } 
+        .custom-green-btn {
+    background-color: var(--button-green, #8BC34A); /* fallback green */
+    border-color: var(--button-green, #8BC34A);
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.custom-green-btn:hover {
+    background-color: #7CB342;
+    border-color: #689F38;
+    color: white;
+}
+
+        .card-reclamation .card-title {
+            font-weight: 600;
+        }
+        .card-reclamation .badge {
+            font-size: 0.9em;
+        }
+        .card-reclamation .card-footer {
+            background-color: transparent; /* Enlève le fond gris par défaut du footer */
+            border-top: none; /* Enlève la bordure par défaut */
+            padding-top: 0; /* Ajuste l'espacement */
+        }
+        .border-5 { /* Utile si vous utilisez Bootstrap 5.1+ */
+            border-width: 5px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid px-4"> {# Utiliser container-fluid pour pleine largeur dans l'admin #}
+        <h1 class="mt-4 mb-4 text-center">Gestion des réclamations</h1>
+
+        {# --- Zone pour Filtres, Tri, Recherche (Nécessite logique Controller/JS) --- #}
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-filter me-1"></i>
+                Filtres et Recherche
+            </div>
+            <div class="card-body">
+                {# Exemple de formulaire de filtre - À adapter #}
+                <form method="get" action="{{ path('admin_reclamation_index') }}"> {# Assurez-vous que la route est correcte #}
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="filterStatut" class="form-label">Statut</label>
+                            <select id="filterStatut" name="statut" class="form-select form-select-sm">
+                                <option value="">Tous</option>
+                                <option value="en attente" {{ app.request.query.get('statut') == 'en attente' ? 'selected' }}>En attente</option>
+                                <option value="traitee" {{ app.request.query.get('statut') == 'traitee' ? 'selected' }}>Traitée</option> {# Adaptez les statuts #}
+                                {# Autres statuts... #}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterCategorie" class="form-label">Catégorie</label>
+                            <input type="text" id="filterCategorie" name="categorie" class="form-control form-control-sm" value="{{ app.request.query.get('categorie') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="searchQuery" class="form-label">Recherche</label>
+                            <input type="search" id="searchQuery" name="q" class="form-control form-control-sm" placeholder="ID, utilisateur..." value="{{ app.request.query.get('q') }}">
+                        </div>
+                       <div class="col-md-3">
+                      <button type="submit" class="btn btn-sm custom-green-btn">
+    <i class="fas fa-search me-1"></i> Filtrer
+</button>
+                      <a href="{{ path('admin_reclamation_index') }}" class="btn btn-sm custom-green-btn ms-2">
+    <i class="fas fa-times me-1"></i> Reset
+</a>
+                    </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        {# --- Fin Zone Filtres --- #}
+
+
+        {# --- Liste des Réclamations --- #}
+        <div class="row">
+            {% for reclamation in reclamations %}
+                {% set status_class = reclamation.statut == 'en attente' ? 'warning' : 'success' %} {# Simplifie les conditions #}
+                {% set border_class = 'border-' ~ status_class %} {# Ex: border-warning ou border-success #}
+
+                <div class="col-12 col-lg-6 col-xl-4 mb-4"> {# Ajustement des colonnes pour différents écrans #}
+                    <div class="card h-100 shadow-sm card-reclamation border-start {{ border_class }} border-5">
+                        <div class="card-body pb-0">
+                            <h5 class="card-title text-{{ status_class }}">
+                                <i class="fas fa-tag me-1"></i>{{ reclamation.categorie }}
+                            </h5>
+                            <p class="card-text small text-muted mb-2">
+                                ID: {{ reclamation.id }} | Soumis le: {{ reclamation.dateSoumission|date('d/m/Y H:i') }}
+                            </p>
+                            <p class="card-text mb-2">
+                                {# Idéalement, afficher le nom/email de l'utilisateur #}
+                                {# Nécessite de joindre l'entité User dans la requête du contrôleur et de la passer #}
+                                {# Exemple: <strong>Utilisateur :</strong> {{ reclamation.utilisateur ? reclamation.utilisateur.email : 'N/A' }}<br> #}
+                                <strong>Utilisateur ID :</strong> {{ reclamation.idUtilisateur }}<br>
+
+                                {# Contenu de la réclamation (optionnel, tronqué) #}
+                                {# {% if reclamation.description %}
+                                    <strong>Description :</strong> {{ reclamation.description|u.truncate(80, '...') }}<br>
+                                {% endif %} #}
+                            </p>
+                            <p class="mb-3">
+                                <strong>Statut :</strong>
+                                <span class="badge bg-{{ status_class }} text-dark"> {# text-dark peut améliorer lisibilité sur fond jaune #}
+                                    {% if status_class == 'warning' %}<i class="fas fa-clock me-1"></i>{% else %}<i class="fas fa-check-circle me-1"></i>{% endif %}
+                                    {{ reclamation.statut|capitalize }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Actions Réclamation">
+                                <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-outline-info" title="Voir Détails">
+                                    <i class="fas fa-eye"></i><span class="d-none d-md-inline ms-1"> Voir</span> {# Texte caché sur petits écrans #}
+                                </a>
+
+                                {% if reclamation.statut == 'en attente' %}
+                                    <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-outline-primary" title="Répondre">
+                                        <i class="fas fa-reply"></i><span class="d-none d-md-inline ms-1"> Répondre</span>
+                                    </a>
+                                {% endif %}
+
+                                {# Le formulaire reste une bonne approche pour le DELETE (méthode POST/DELETE) #}
+                                <form method="post" action="{{ path('admin_reclamation_delete', {'id': reclamation.id}) }}" class="d-inline"
+                                      data-confirm-message="Êtes-vous sûr de vouloir supprimer la réclamation #{{ reclamation.id }} ?"
+                                      onsubmit="return confirm(this.getAttribute('data-confirm-message'));">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                                    <input type="hidden" name="_method" value="DELETE"> {# Utiliser la méthode DELETE si configuré #}
+                                    <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                        <i class="fas fa-trash-alt"></i><span class="d-none d-md-inline ms-1"> Suppr.</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>Aucune réclamation trouvée correspondant aux critères.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {# --- Fin Liste des Réclamations --- #}
+
+        {# --- Pagination (Nécessite KnpPaginatorBundle ou équivalent) --- #}
+        {# {% if reclamations is defined and reclamations.getTotalItemCount > reclamations.getItemNumberPerPage %}
+            <div class="navigation d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(reclamations) }}
+            </div>
+        {% endif %} #}
+        {# --- Fin Pagination --- #}
+
+    </div> {# Fin container-fluid #}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Optionnel: Script pour améliorer la confirmation de suppression
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const deleteForms = document.querySelectorAll('form[data-confirm-message]');
+        //     deleteForms.forEach(form => {
+        //         form.addEventListener('submit', function(event) {
+        //             const message = form.getAttribute('data-confirm-message');
+        //             if (!confirm(message)) {
+        //                 event.preventDefault(); // Annule la soumission si l'utilisateur clique sur "Annuler"
+        //             }
+        //             // Pour une meilleure UX, envisagez d'utiliser une modale (Bootstrap Modal, SweetAlert) ici
+        //         });
+        //     });
+        // });
+
+        // Optionnel: Script pour soumission AJAX des filtres (pour éviter rechargement page)
+        // document.getElementById('filterForm')?.addEventListener('submit', function(event) {
+        //      event.preventDefault();
+        //      // Logique pour récupérer les données du formulaire
+        //      // Faire une requête fetch/axios vers le contrôleur
+        //      // Mettre à jour la liste des réclamations avec la réponse
+        // });
+    </script>
+{% endblock %}

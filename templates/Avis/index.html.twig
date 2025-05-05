@@ -1,0 +1,1564 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}MoveEasy - Avis Clients{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;    /* Dark teal */
+            --primary-medium: #00A896;   /* Medium teal */
+            --primary-light: #99D5CF;    /* Light teal */
+            --secondary-color: #0B5351;  /* Using primary dark as secondary */
+            --accent-color: #F3752B;     /* Complementary orange for contrast */
+            --success-color: #2E8B57;    /* SeaGreen */
+            --warning-color: #FFC857;    /* Amber */
+            --danger-color: #E63946;     /* Red */
+            --text-dark: #2A2D34;        /* Dark grey for text */
+            --text-light: #F8F9FA;       /* Light color for text on dark backgrounds */
+            --background-light: #F8F9FA; /* Light background */
+            --background-medium: #E9ECEF; /* Medium light background */
+        }
+
+        .rail-banner {
+            background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75)), 
+                        url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .rail-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(11, 83, 81, 0.3), transparent);
+        }
+
+        .rail-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            overflow: hidden;
+        }
+
+        .rail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .rail-card .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .rail-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rail-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .rail-btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-medium);
+            color: var(--primary-medium);
+        }
+
+        .rail-btn-outline:hover {
+            background-color: var(--primary-medium);
+            color: white;
+        }
+
+        .filter-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .filter-card .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+        }
+
+        .search-box {
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-medium);
+            box-shadow: 0 0 0 3px rgba(153, 213, 207, 0.5);
+        }
+
+        .search-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .search-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .rating-stars {
+            color: var(--warning-color);
+            font-size: 1.1rem;
+        }
+
+        .rating-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .rating-excellent { background-color: #E8F5E9; color: var(--success-color); border-left: 3px solid var(--success-color); }
+        .rating-good { background-color: #E3F2FD; color: #1976D2; border-left: 3px solid #1976D2; }
+        .rating-average { background-color: #FFF8E1; color: #FF8F00; border-left: 3px solid #FF8F00; }
+        .rating-poor { background-color: #FFF3E0; color: #E64A19; border-left: 3px solid #E64A19; }
+        .rating-bad { background-color: #FFEBEE; color: var(--danger-color); border-left: 3px solid var(--danger-color); }
+
+        .avatar-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(11, 83, 81, 0.1);
+            color: var(--primary-medium);
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avis-date {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        /* Improved Reaction Buttons */
+        .reaction-btn {
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 25px;
+            transition: all 0.2s ease;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reaction-btn:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .reaction-btn:active {
+            transform: translateY(0);
+        }
+
+        .reaction-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.3);
+        }
+
+        .reaction-btn .fas {
+            transition: all 0.2s ease;
+        }
+
+        .reaction-btn:hover .fas {
+            transform: scale(1.2);
+        }
+
+        .like-btn.active {
+            background-color: #e6f7f2;
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .dislike-btn.active {
+            background-color: #ffebee;
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        /* Pulse animation for reaction feedback */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .reaction-btn.active .fas {
+            animation: pulse 0.5s ease;
+        }
+
+        /* Loading indicator */
+        .reaction-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .reaction-btn.loading .reaction-loading {
+            opacity: 1;
+        }
+
+        .reaction-btn.loading span:not(.reaction-loading) {
+            opacity: 0.5;
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-medium);
+            border-color: var(--primary-medium);
+        }
+
+        .page-link {
+            color: var(--primary-color);
+        }
+
+        .page-link:hover {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        /* Loading state for the page */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767.98px) {
+            .rail-banner {
+                padding: 50px 0;
+                text-align: center;
+            }
+            
+            .rail-banner .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .filter-card {
+                margin-bottom: 20px;
+            }
+
+        }
+        /* Train Bot Styles */
+.train-guide-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(11, 83, 81, 0.9);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.train-guide-container {
+    display: flex;
+    align-items: center;
+    max-width: 800px;
+    animation: trainEntrance 0.8s ease-out;
+}
+
+@keyframes trainEntrance {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(0); }
+}
+
+.train-engine-large {
+    width: 120px;
+    height: 100px;
+    background-color: var(--accent-color);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    z-index: 2;
+}
+
+.train-face-large {
+    position: absolute;
+    top: 25px;
+    width: 80px;
+    height: 50px;
+}
+
+.train-eyes-large {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.eye-large {
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    animation: blink 4s infinite;
+}
+
+.train-smile-large {
+    width: 50px;
+    height: 20px;
+    margin: 0 auto;
+    border-bottom: 4px solid white;
+    border-radius: 0 0 30px 30px;
+}
+
+.train-chimney-large {
+    position: absolute;
+    top: -25px;
+    left: 25px;
+    width: 30px;
+    height: 25px;
+    background-color: var(--primary-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.train-smoke-large {
+    position: absolute;
+    top: -50px;
+    left: 35px;
+    width: 15px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: puffLarge 3s infinite;
+}
+
+.train-carriage-large {
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    width: 600px;
+    min-height: 300px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    position: relative;
+    margin-left: -20px;
+    z-index: 1;
+    color: var(--text-dark);
+}
+
+.bot-message-large {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.bot-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.highlight-element {
+    position: relative;
+    z-index: 10000;
+}
+
+.highlight-element::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 3px solid var(--accent-color);
+    border-radius: 8px;
+    animation: pulseHighlight 2s infinite;
+}
+
+@keyframes puffLarge {
+    0% { opacity: 0; transform: translateY(0) scale(0.5); }
+    50% { opacity: 1; transform: translateY(-30px) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.5); }
+}
+
+@keyframes pulseHighlight {
+    0% { box-shadow: 0 0 0 0 rgba(243, 117, 43, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(243, 117, 43, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(243, 117, 43, 0); }
+}
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Loading overlay #}
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    {# Banner #}
+    <div class="rail-banner" aria-labelledby="page-title">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3 fw-bold" id="page-title"><i class="fas fa-comment-alt me-3" aria-hidden="true"></i>Avis Clients MoveEasy</h1>
+                    <p class="lead mb-4">Découvrez ce que nos clients pensent de nos services ferroviaires</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="{{ path('app_avis_new') }}" class="rail-btn btn-lg me-2">
+                        <i class="fas fa-plus-circle me-2" aria-hidden="true"></i> Ajouter un Avis
+                    </a>
+                    <a href="{{ path('app_home') }}" class="rail-btn rail-btn-outline">
+                        <i class="fas fa-home me-2" aria-hidden="true"></i> <span class="d-none d-md-inline">Accueil</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{# Train Guide Bot #}
+<div id="train-guide-overlay" class="train-guide-overlay">
+    <div class="train-guide-container">
+        <div class="train-engine-large">
+            <div class="train-face-large">
+                <div class="train-eyes-large">
+                    <div class="eye-large left-eye"></div>
+                    <div class="eye-large right-eye"></div>
+                </div>
+                <div class="train-smile-large"></div>
+            </div>
+            <div class="train-chimney-large"></div>
+            <div class="train-smoke-large"></div>
+        </div>
+        <div class="train-carriage-large">
+            <div class="bot-message-large" id="bot-message-large"></div>
+            <div class="bot-controls">
+                <button id="bot-prev" class="rail-btn-outline btn-sm"><i class="fas fa-arrow-left me-1"></i> Précédent</button>
+                <button id="bot-next" class="rail-btn btn-sm">Suivant <i class="fas fa-arrow-right ms-1"></i></button>
+                <button id="bot-close" class="rail-btn-outline btn-sm"><i class="fas fa-times me-1"></i> Fermer</button>
+            </div>
+            <div class="bot-progress">
+                <div class="bot-progress-bar" id="bot-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="container mb-5">
+        {# Flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas 
+                            {% if label == 'success' %}fa-check-circle
+                            {% elseif label == 'danger' %}fa-exclamation-circle
+                            {% elseif label == 'warning' %}fa-exclamation-triangle
+                            {% else %}fa-info-circle{% endif %} 
+                            me-2" aria-hidden="true"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="row">
+            {# Filter sidebar #}
+            <div class="col-lg-3 mb-4">
+                <div class="card filter-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtres</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="mb-3"><i class="fas fa-star me-2"></i>Note</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="" id="filter-all" checked>
+                            <label class="form-check-label" for="filter-all">
+                                Toutes les notes
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="5" id="filter-five">
+                            <label class="form-check-label d-flex align-items-center" for="filter-five">
+                                <span class="rating-badge rating-excellent me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                5 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="4" id="filter-four">
+                            <label class="form-check-label d-flex align-items-center" for="filter-four">
+                                <span class="rating-badge rating-good me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                4 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="3" id="filter-three">
+                            <label class="form-check-label d-flex align-items-center" for="filter-three">
+                                <span class="rating-badge rating-average me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                3 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="2" id="filter-two">
+                            <label class="form-check-label d-flex align-items-center" for="filter-two">
+                                <span class="rating-badge rating-poor me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                2 étoiles
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input filter-rating" type="radio" name="ratingFilter" value="1" id="filter-one">
+                            <label class="form-check-label d-flex align-items-center" for="filter-one">
+                                <span class="rating-badge rating-bad me-2" style="width: 10px; height: 10px; padding: 0; border-radius: 50%;"></span>
+                                1 étoile
+                            </label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="mb-3"><i class="fas fa-sort me-2"></i>Tri</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="newest" id="sort-newest" checked>
+                            <label class="form-check-label" for="sort-newest">
+                                Plus récents d'abord
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="oldest" id="sort-oldest">
+                            <label class="form-check-label" for="sort-oldest">
+                                Plus anciens d'abord
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="highest" id="sort-highest">
+                            <label class="form-check-label" for="sort-highest">
+                                Notes les plus hautes
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input sort-option" type="radio" name="sortOption" value="lowest" id="sort-lowest">
+                            <label class="form-check-label" for="sort-lowest">
+                                Notes les plus basses
+                            </label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <button id="reset-filters" class="rail-btn-outline w-100">
+                            <i class="fas fa-undo me-2"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card filter-card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Statistiques</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>5 étoiles</span>
+                                <span class="badge bg-success rounded-pill" id="stats-five">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" id="progress-five" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>4 étoiles</span>
+                                <span class="badge bg-primary rounded-pill" id="stats-four">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" id="progress-four" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>3 étoiles</span>
+                                <span class="badge bg-warning rounded-pill" id="stats-three">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" id="progress-three" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>2 étoiles</span>
+                                <span class="badge bg-warning rounded-pill" id="stats-two" style="background-color: #ff9800 !important;">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" id="progress-two" style="background-color: #ff9800; width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6 class="d-flex justify-content-between">
+                                <span>1 étoile</span>
+                                <span class="badge bg-danger rounded-pill" id="stats-one">0</span>
+                            </h6>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-danger" id="progress-one" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {# Avis List #}
+            <div class="col-lg-9">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                    <h2 class="mb-3 mb-md-0"><i class="fas fa-comment-dots me-2" aria-hidden="true"></i>Avis Clients</h2>
+                    <div class="input-group w-100 w-md-50">
+                        <input type="text" id="searchInput" class="form-control search-box" placeholder="Rechercher un avis..." aria-label="Rechercher un avis">
+                        <button class="btn search-btn" type="button" aria-label="Rechercher">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                {% if avis|length > 0 %}
+                <div class="row" id="avisContainer">
+                    {% for a in avis %}
+                        <div class="col-md-6 mb-4 avis-item" data-rating="{{ a.note }}" data-avis-id="{{ a.id }}">
+                            <div class="card rail-card h-100 position-relative">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="ticket-id">#AV-{{ a.id|slice(0, 8) }}</div>
+                                    <span class="rating-badge 
+                                        {% if a.note == 5 %}rating-excellent
+                                        {% elseif a.note == 4 %}rating-good
+                                        {% elseif a.note == 3 %}rating-average
+                                        {% elseif a.note == 2 %}rating-poor
+                                        {% else %}rating-bad{% endif %}">
+                                        {{ a.note }}/5
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mt-3">
+                                        <div class="reaction-buttons" data-avis-id="{{ a.id }}">
+                                            <button type="button" class="btn btn-sm me-2 reaction-btn like-btn {{ app.session.get('user_id') and a.isLikedByUser(app.session.get('user_id')) ? 'active' : '' }}" 
+                                                data-type="like" aria-label="J'aime cet avis" aria-pressed="{{ app.session.get('user_id') and a.isLikedByUser(app.session.get('user_id')) ? 'true' : 'false' }}">
+                                                <div class="reaction-loading">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                                <i class="fas fa-thumbs-up me-1" aria-hidden="true"></i>
+                                                <span class="likes-count">{{ a.likesCount }}</span>
+                                                <span class="sr-only">nombre de likes</span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm reaction-btn dislike-btn {{ app.session.get('user_id') and a.isDislikedByUser(app.session.get('user_id')) ? 'active' : '' }}" 
+                                                data-type="dislike" aria-label="Je n'aime pas cet avis" aria-pressed="{{ app.session.get('user_id') and a.isDislikedByUser(app.session.get('user_id')) ? 'true' : 'false' }}">
+                                                <div class="reaction-loading">
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                                <i class="fas fa-thumbs-down me-1" aria-hidden="true"></i>
+                                                <span class="dislikes-count">{{ a.dislikesCount }}</span>
+                                                <span class="sr-only">nombre de dislikes</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="avatar-placeholder">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-0">Utilisateur #{{ a.idUtilisateur }}</h5>
+                                            <small class="avis-date">Posté le {{ a.dateAvis|date('d/m/Y') }}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="rating-stars mb-3">
+                                        {% for i in 1..5 %}
+                                            {% if i <= a.note %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <p class="mb-3">{{ a.contenu|slice(0, 150) ~ (a.contenu|length > 150 ? '...' : '') }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ path('app_avis_show', {'id': a.id}) }}" class="btn btn-sm rail-btn-outline">
+                                            <i class="fas fa-eye me-1"></i> Voir détails
+                                        </a>
+                                        <div>
+                                            <a href="{{ path('app_avis_edit', {'id': a.id}) }}" class="btn btn-sm rail-btn-outline me-1">
+                                                <i class="fas fa-edit me-1"></i> Modifier
+                                            </a>
+                                            <button type="button" class="btn btn-sm rail-btn-outline" data-bs-toggle="modal" data-bs-target="#deleteModal{{ a.id }}" style="border-color: var(--danger-color); color: var(--danger-color);">
+                                                <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal de confirmation de suppression -->
+                        <div class="modal fade" id="deleteModal{{ a.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ a.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color: var(--danger-color); color: white;">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ a.id }}"><i class="fas fa-exclamation-triangle me-2"></i>Confirmer la suppression</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                                        <p class="small text-muted">Cette action est irréversible.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <form method="post" action="{{ path('app_avis_delete', {'id': a.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a.id) }}">
+                                            <button type="submit" class="rail-btn" style="background-color: var(--danger-color);">
+                                                <i class="fas fa-trash-alt me-1"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            
+                
+                
+               {% else %}
+                <div class="empty-state text-center py-5">
+                    <i class="fas fa-comment-slash fa-4x mb-3" style="color: var(--primary-medium);" aria-hidden="true"></i>
+                    <h3 class="mb-3">Aucun avis disponible</h3>
+                    <p class="mb-4">Soyez le premier à partager votre expérience avec nos services.</p>
+                    <a href="{{ path('app_avis_new') }}" class="rail-btn">
+                        <i class="fas fa-plus-circle me-2" aria-hidden="true"></i> Ajouter un avis
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-section" style="background-color: #1f6f68; color: white;">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-logo mb-3">
+                        <span class="h4" style="color: white;">MoveEasy</span>
+                    </div>
+                    <p>Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                    <div class="social-icons mt-4">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4">Liens rapides</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                        <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                        <li class="mb-2"><a href="{{ path('app_avis_index') }}" class="text-white text-decoration-none">Avis</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4">Services</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-4">
+                    <h5 class="mb-4">Contactez-nous</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            <span>123 Avenue Habib Bourguiba, Tunis</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-phone-alt me-2"></i>
+                            <span>+216 70 123 456</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-envelope me-2"></i>
+                            <span>contact@moveeasy.tn</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock me-2"></i>
+                            <span>Lun-Ven: 8h-18h</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                        <li class="list-inline-item mx-2">•</li>
+                        <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const ratingFilters = document.querySelectorAll('.filter-rating');
+            const sortOptions = document.querySelectorAll('.sort-option');
+            const resetButton = document.getElementById('reset-filters');
+            const avisItems = document.querySelectorAll('.avis-item');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            
+            // Debounce function for search input
+            function debounce(func, wait) {
+                let timeout;
+                return function() {
+                    const context = this, args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+            
+            // Calculate statistics
+            function updateStatistics() {
+                const ratings = [1, 2, 3, 4, 5];
+                const counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+                
+                avisItems.forEach(item => {
+                    if (item.style.display !== 'none') {
+                        const rating = parseInt(item.dataset.rating);
+                        if (counts[rating] !== undefined) {
+                            counts[rating]++;
+                        }
+                    }
+                });
+                
+                const totalVisible = Array.from(avisItems).filter(item => item.style.display !== 'none').length;
+                
+                ratings.forEach(rating => {
+                    const count = counts[rating] || 0;
+                    const percentage = totalVisible > 0 ? (count / totalVisible * 100) : 0;
+                    
+                    document.getElementById(`stats-${rating === 5 ? 'five' : rating === 4 ? 'four' : rating === 3 ? 'three' : rating === 2 ? 'two' : 'one'}`).textContent = count;
+                    document.getElementById(`progress-${rating === 5 ? 'five' : rating === 4 ? 'four' : rating === 3 ? 'three' : rating === 2 ? 'two' : 'one'}`).style.width = `${percentage}%`;
+                });
+            }
+            
+            // Filter items based on search and rating
+            function filterItems() {
+                const searchText = searchInput.value.toLowerCase();
+                let selectedRating = '';
+                
+                ratingFilters.forEach(filter => {
+                    if (filter.checked) {
+                        selectedRating = filter.value;
+                    }
+                });
+                
+                avisItems.forEach(item => {
+                    const content = item.querySelector('p').textContent.toLowerCase();
+                    const userName = item.querySelector('h5').textContent.toLowerCase();
+                    const rating = item.dataset.rating;
+                    
+                    const matchesSearch = searchText === '' || 
+                                        content.includes(searchText) || 
+                                        userName.includes(searchText) ||
+                                        item.querySelector('.ticket-id').textContent.toLowerCase().includes(searchText);
+                                        
+                    const matchesRating = selectedRating === '' || rating === selectedRating;
+                    
+                    if (matchesSearch && matchesRating) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                let visibleItems = Array.from(avisItems).filter(item => item.style.display !== 'none');
+                let noResultsElement = document.getElementById('no-results');
+                
+                if (visibleItems.length === 0 && avisItems.length > 0) {
+                    if (!noResultsElement) {
+                        noResultsElement = document.createElement('div');
+                        noResultsElement.id = 'no-results';
+                        noResultsElement.className = 'col-12';
+                        noResultsElement.innerHTML = `
+                            <div class="empty-state text-center py-5">
+                                <i class="fas fa-search fa-4x mb-3" style="color: var(--primary-medium);"></i>
+                                <h3 class="mb-3">Aucun résultat</h3>
+                                <p class="mb-4">Aucun avis ne correspond à vos critères de recherche.</p>
+                                <button id="reset-search" class="rail-btn-outline">
+                                    <i class="fas fa-undo me-2"></i> Réinitialiser la recherche
+                                </button>
+                            </div>
+                        `;
+                        document.getElementById('avisContainer').appendChild(noResultsElement);
+                        
+                        document.getElementById('reset-search').addEventListener('click', function() {
+                            document.getElementById('filter-all').checked = true;
+                            document.getElementById('sort-newest').checked = true;
+                            searchInput.value = '';
+                            filterItems();
+                            sortItems();
+                            noResultsElement.remove();
+                        });
+                    }
+                } else if (noResultsElement) {
+                    noResultsElement.remove();
+                }
+                
+                updateStatistics();
+            }
+            
+            // Sort items based on selected option
+            function sortItems() {
+                const container = document.getElementById('avisContainer');
+                const items = Array.from(avisItems).filter(item => item.style.display !== 'none');
+                let sortCriteria = '';
+                
+                sortOptions.forEach(option => {
+                    if (option.checked) {
+                        sortCriteria = option.value;
+                    }
+                });
+                
+                items.sort((a, b) => {
+                    const dateA = new Date(a.querySelector('.avis-date').textContent.replace('Posté le ', '').split('/').reverse().join('-'));
+                    const dateB = new Date(b.querySelector('.avis-date').textContent.replace('Posté le ', '').split('/').reverse().join('-'));
+                    const ratingA = parseInt(a.dataset.rating);
+                    const ratingB = parseInt(b.dataset.rating);
+                    
+                    switch(sortCriteria) {
+                        case 'newest':
+                            return dateB - dateA;
+                        case 'oldest':
+                            return dateA - dateB;
+                        case 'highest':
+                            return ratingB - ratingA || dateB - dateA;
+                        case 'lowest':
+                            return ratingA - ratingB || dateB - dateA;
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Reattach sorted items
+                items.forEach(item => container.appendChild(item));
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', debounce(() => {
+                loadingOverlay.classList.add('active');
+                setTimeout(() => {
+                    filterItems();
+                    sortItems();
+                    loadingOverlay.classList.remove('active');
+                }, 300);
+            }, 300));
+            
+            ratingFilters.forEach(filter => {
+                filter.addEventListener('change', () => {
+                    loadingOverlay.classList.add('active');
+                    setTimeout(() => {
+                        filterItems();
+                        sortItems();
+                        loadingOverlay.classList.remove('active');
+                    }, 300);
+                });
+            });
+            
+            sortOptions.forEach(option => {
+                option.addEventListener('change', () => {
+                    loadingOverlay.classList.add('active');
+                    setTimeout(() => {
+                        sortItems();
+                        loadingOverlay.classList.remove('active');
+                    }, 300);
+                });
+            });
+            
+            resetButton.addEventListener('click', function() {
+                loadingOverlay.classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('filter-all').checked = true;
+                    document.getElementById('sort-newest').checked = true;
+                    searchInput.value = '';
+                    filterItems();
+                    sortItems();
+                    loadingOverlay.classList.remove('active');
+                }, 300);
+            });
+            
+           // Improved Like/Dislike System with Better Error Handling
+document.querySelectorAll('.reaction-btn').forEach(button => {
+    button.addEventListener('click', async function(event) {
+        // Prevent default action if this is a link
+        event.preventDefault();
+        
+        // Avoid multiple clicks
+        if (this.classList.contains('loading')) return;
+        
+        // Debug information
+        console.log('Button clicked:', this);
+        
+        const reactionButtons = this.closest('.reaction-buttons');
+        
+        // Check if we can find the parent element with data attribute
+        if (!reactionButtons) {
+            console.error('Could not find parent .reaction-buttons element');
+            return;
+        }
+        
+        const avisId = reactionButtons.dataset.avisId;
+        
+        // Check if avisId exists
+        if (!avisId) {
+            console.error('Missing data-avis-id attribute on .reaction-buttons element');
+            return;
+        }
+        
+        const type = this.dataset.type;
+        
+        // Check if type is valid
+        if (!type || (type !== 'like' && type !== 'dislike')) {
+            console.error('Invalid or missing data-type attribute on button:', type);
+            return;
+        }
+        
+        const likeBtn = reactionButtons.querySelector('.like-btn');
+        const dislikeBtn = reactionButtons.querySelector('.dislike-btn');
+        
+        if (!likeBtn || !dislikeBtn) {
+            console.error('Could not find like or dislike buttons');
+            return;
+        }
+        
+        const likesCountElement = likeBtn.querySelector('.likes-count');
+        const dislikesCountElement = dislikeBtn.querySelector('.dislikes-count');
+        
+        if (!likesCountElement || !dislikesCountElement) {
+            console.error('Could not find count elements');
+            return;
+        }
+        
+        // Show loading state
+        this.classList.add('loading');
+        
+        // Store original button content to restore later
+        const originalContent = this.innerHTML;
+        
+        try {
+            // Log request details
+            console.log(`Sending request to: /avis/${avisId}/reaction/${type}`);
+            
+            // Make the request to the server
+            const response = await fetch(`/avis/${avisId}/reaction/${type}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                credentials: 'same-origin' // Include cookies
+            });
+            
+            // Log response status
+            console.log('Response status:', response.status);
+            
+            // Check if response is OK
+            if (!response.ok) {
+                console.error('Server returned error status:', response.status);
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            // Parse the JSON response
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            // Check if operation was successful
+            if (data.success) {
+                // Update counters
+                likesCountElement.textContent = data.likes;
+                dislikesCountElement.textContent = data.dislikes;
+                
+                // Update button states
+                if (data.action === 'removed') {
+                    this.classList.remove('active');
+                    this.setAttribute('aria-pressed', 'false');
+                    console.log('Reaction removed');
+                } else if (data.action === 'added') {
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                    
+                    if (type === 'like') {
+                        dislikeBtn.classList.remove('active');
+                        dislikeBtn.setAttribute('aria-pressed', 'false');
+                    } else {
+                        likeBtn.classList.remove('active');
+                        likeBtn.setAttribute('aria-pressed', 'false');
+                    }
+                    console.log('Reaction added');
+                } else if (data.action === 'changed') {
+                    if (type === 'like') {
+                        likeBtn.classList.add('active');
+                        likeBtn.setAttribute('aria-pressed', 'true');
+                        dislikeBtn.classList.remove('active');
+                        dislikeBtn.setAttribute('aria-pressed', 'false');
+                    } else {
+                        dislikeBtn.classList.add('active');
+                        dislikeBtn.setAttribute('aria-pressed', 'true');
+                        likeBtn.classList.remove('active');
+                        likeBtn.setAttribute('aria-pressed', 'false');
+                    }
+                    console.log('Reaction changed');
+                }
+            } else {
+                console.error('Operation failed:', data.message || 'No error message provided');
+                this.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i> Échec';
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Error details:', error);
+            
+            // Show user-friendly error message
+            this.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i> Erreur';
+            setTimeout(() => {
+                this.innerHTML = originalContent;
+            }, 2000);
+        } finally {
+            // Always remove loading state
+            this.classList.remove('loading');
+        }
+    });
+});
+
+// Make sure these functions exist before calling them
+if (typeof updateStatistics === 'function') {
+    updateStatistics();
+} else {
+    console.warn('Function updateStatistics is not defined');
+}
+
+if (typeof filterItems === 'function') {
+    filterItems();
+} else {
+    console.warn('Function filterItems is not defined');
+}
+
+if (typeof sortItems === 'function') {
+    sortItems();
+} else {
+    console.warn('Function sortItems is not defined');
+}
+        // Train Bot functionality
+ document.addEventListener('DOMContentLoaded', function() {
+        const guideOverlay = document.getElementById('train-guide-overlay');
+        const botMessage = document.getElementById('bot-message-large');
+        const nextBtn = document.getElementById('bot-next');
+        const prevBtn = document.getElementById('bot-prev');
+        const closeBtn = document.getElementById('bot-close');
+        const progressBar = document.getElementById('bot-progress-bar');
+        
+        let currentStep = 0;
+        let highlightedElement = null;
+        
+        // Enhanced Tour steps with more detailed content
+        const tourSteps = [
+            {
+                title: "🚂 Bienvenue sur la page d'avis MoveEasy!",
+                content: "Je suis votre guide train et je vais vous montrer comment naviguer et utiliser toutes les fonctionnalités de cette page.<br><br>" +
+                        "Nous allons explorer ensemble les différentes sections pour vous aider à trouver et comprendre les avis des clients.",
+                element: null,
+                tips: "Cliquez sur 'Suivant' pour commencer la visite!"
+            },
+            {
+                title: "📢 Bannière Principale",
+                content: "Cette section présente les éléments clés :<ul>" +
+                        "<li><strong>Titre de la page</strong> - Identifie clairement la section des avis clients</li>" +
+                        "<li><strong>Bouton 'Ajouter un Avis'</strong> - Permet aux clients de partager leur expérience</li>" +
+                        "<li><strong>Bouton 'Accueil'</strong> - Retour rapide à la page d'accueil</li></ul>",
+                element: ".rail-banner",
+                tips: "Vous pouvez ajouter un avis à tout moment pendant votre navigation."
+            },
+            {
+                title: "💡 Messages Flash",
+                content: "Cette zone affiche les messages système temporaires :<ul>" +
+                        "<li><span style='color: var(--success-color);'><strong>Succès</strong></span> - Confirmations d'actions réussies</li>" +
+                        "<li><span style='color: var(--danger-color);'><strong>Erreurs</strong></span> - Problèmes à votre attention</li>" +
+                        "<li><span style='color: var(--warning-color);'><strong>Avertissements</strong></span> - Informations importantes</li></ul>" +
+                        "Ces messages disparaissent automatiquement ou peuvent être fermés manuellement.",
+                element: ".alert",
+                tips: "Lisez toujours ces messages attentivement pour être informé des actions récentes."
+            },
+            {
+                title: "🔍 Filtres et Tri",
+                content: "Ce panneau vous permet d'affiner l'affichage des avis :<ul>" +
+                        "<li><strong>Filtres par note</strong> - Affichez seulement les avis avec certaines étoiles</li>" +
+                        "<li><strong>Options de tri</strong> - Changez l'ordre d'affichage (récent, ancien, mieux/pire notés)</li>" +
+                        "<li><strong>Bouton de réinitialisation</strong> - Retour à la vue par défaut</li></ul>",
+                element: ".filter-card",
+                tips: "Combinez filtres et tri pour trouver exactement ce que vous cherchez."
+            },
+            {
+                title: "📊 Statistiques des Avis",
+                content: "Ce tableau de bord visuel montre :<ul>" +
+                        "<li><strong>Répartition des notes</strong> - Pourcentage et nombre pour chaque type d'étoiles</li>" +
+                        "<li><strong>Barres de progression colorées</strong> - Visualisation intuitive des proportions</li>" +
+                        "<li><strong>Mise à jour en temps réel</strong> - Les stats changent quand vous filtrez</li></ul>",
+                element: ".filter-card:last-child",
+                tips: "Un bon moyen d'avoir une vue d'ensemble rapide de la satisfaction client."
+            },
+            {
+                title: "🔎 Barre de Recherche",
+                content: "Recherchez dans le contenu des avis avec :<ul>" +
+                        "<li><strong>Recherche texte</strong> - Trouvez des mots dans les commentaires</li>" +
+                        "<li><strong>Recherche par ID</strong> - Cherchez un avis spécifique avec son numéro</li>" +
+                        "<li><strong>Recherche par utilisateur</strong> - Trouvez tous les avis d'un client</li></ul>" +
+                        "La recherche se met à jour automatiquement au fur et à mesure que vous tapez.",
+                element: "#searchInput",
+                tips: "Utilisez des mots-clés comme 'ponctualité' ou 'service' pour des recherches ciblées."
+            },
+            {
+                title: "📝 Carte Avis Client",
+                content: "Chaque carte représente un avis avec :<ul>" +
+                        "<li><strong>Note visuelle</strong> - Étoiles et badge coloré</li>" +
+                        "<li><strong>Système de réactions</strong> - Like/Dislike pour évaluer les avis</li>" +
+                        "<li><strong>Actions</strong> - Voir les détails, modifier ou supprimer</li>" +
+                        "<li><strong>Date et auteur</strong> - Contexte de chaque commentaire</li></ul>",
+                element: ".avis-item",
+                tips: "Passez votre souris sur une carte pour voir une animation de soulèvement."
+            },
+            {
+                title: "📌 État Vide",
+                content: "Ce message spécial s'affiche quand :<ul>" +
+                        "<li>Aucun avis n'a encore été posté</li>" +
+                        "<li>Vos filtres ne correspondent à aucun avis</li>" +
+                        "<li>Une recherche ne donne aucun résultat</li></ul>" +
+                        "Il propose toujours une action utile comme ajouter un avis ou réinitialiser les filtres.",
+                element: ".empty-state",
+                tips: "Si vous voyez ce message, vérifiez vos filtres avant d'ajouter un nouvel avis."
+            },
+            {
+                title: "🏁 Fin de la Visite Guidée",
+                content: "Félicitations! Vous maîtrisez maintenant toutes les fonctionnalités de la page d'avis.<br><br>" +
+                        "<strong>Résumé des fonctionnalités clés :</strong><ul>" +
+                        "<li>Filtrage et tri avancé des avis</li>" +
+                        "<li>Statistiques visuelles de satisfaction</li>" +
+                        "<li>Système d'interaction avec les avis</li>" +
+                        "<li>Recherche texte intuitive</li></ul>" +
+                        "N'hésitez pas à relancer ce guide si besoin!",
+                element: null,
+                tips: "Vous pouvez accéder à ce guide à tout moment via le bouton en bas à gauche."
+            }
+        ];
+        
+        // Start guide
+        function startGuide() {
+            guideOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            showStep(0);
+            
+            // Animate train smile on start
+            const smile = document.querySelector('.train-smile-large');
+            smile.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                smile.style.transform = 'scale(1)';
+            }, 300);
+        }
+        
+        // Show specific step
+        function showStep(stepIndex) {
+            currentStep = stepIndex;
+            const step = tourSteps[stepIndex];
+            
+            // Update message with title, content and tips
+            botMessage.innerHTML = `
+                <h4>${step.title}</h4>
+                <p>${step.content}</p>
+                ${step.tips ? `<div class="alert alert-primary mt-3 p-2 small">💡 <strong>Astuce :</strong> ${step.tips}</div>` : ''}
+            `;
+            
+            // Update buttons
+            prevBtn.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';
+            
+            if (stepIndex === tourSteps.length - 1) {
+                nextBtn.innerHTML = '<i class="fas fa-check me-1"></i> Terminer';
+                nextBtn.classList.add('btn-success');
+            } else {
+                nextBtn.innerHTML = 'Suivant <i class="fas fa-arrow-right ms-1"></i>';
+                nextBtn.classList.remove('btn-success');
+            }
+            
+            // Update progress bar
+            const progress = ((stepIndex + 1) / tourSteps.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Highlight element with smooth scrolling
+            if (highlightedElement) {
+                highlightedElement.classList.remove('highlight-element');
+                highlightedElement = null;
+            }
+            
+            if (step.element) {
+                const elements = document.querySelectorAll(step.element);
+                if (elements.length > 0) {
+                    highlightedElement = elements[0];
+                    highlightedElement.classList.add('highlight-element');
+                    
+                    // Smooth scroll to element with offset
+                    setTimeout(() => {
+                        const elementPosition = highlightedElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - 100;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }, 300);
+                }
+            }
+            
+            // Animate train face based on step
+            animateTrainFace(stepIndex);
+        }
+        
+        // Animate train face based on context
+        function animateTrainFace(stepIndex) {
+            const smile = document.querySelector('.train-smile-large');
+            const eyes = document.querySelectorAll('.eye-large');
+            
+            // Reset previous animations
+            smile.style.borderRadius = '0 0 40px 40px';
+            smile.style.borderBottom = '5px solid white';
+            
+            // Special animations for certain steps
+            switch(stepIndex) {
+                case 0: // Welcome
+                    smile.style.transform = 'scale(1.3) rotate(2deg)';
+                    setTimeout(() => {
+                        smile.style.transform = 'scale(1) rotate(0)';
+                    }, 500);
+                    break;
+                case tourSteps.length - 1: // Final step
+                    smile.style.borderRadius = '40px 40px 0 0';
+                    smile.style.borderBottom = 'none';
+                    smile.style.borderTop = '5px solid white';
+                    break;
+                case 3: // Filters
+                    eyes.forEach(eye => {
+                        eye.style.transform = 'scale(1.2)';
+                    });
+                    setTimeout(() => {
+                        eyes.forEach(eye => {
+                            eye.style.transform = 'scale(1)';
+                        });
+                    }, 300);
+                    break;
+            }
+        }
+        
+        // Event listeners with enhanced feedback
+        nextBtn.addEventListener('click', function() {
+            if (currentStep < tourSteps.length - 1) {
+                // Animate button click
+                this.classList.add('active');
+                setTimeout(() => {
+                    this.classList.remove('active');
+                    showStep(currentStep + 1);
+                }, 150);
+            } else {
+                closeGuide();
+            }
+        });
+        
+        prevBtn.addEventListener('click', function() {
+            if (currentStep > 0) {
+                // Animate button click
+                this.classList.add('active');
+                setTimeout(() => {
+                    this.classList.remove('active');
+                    showStep(currentStep - 1);
+                }, 150);
+            }
+        });
+        
+        closeBtn.addEventListener('click', closeGuide);
+        
+        function closeGuide() {
+            // Animate close
+            guideOverlay.style.opacity = '0';
+            document.body.style.overflow = '';
+            
+            setTimeout(() => {
+                if (highlightedElement) {
+                    highlightedElement.classList.remove('highlight-element');
+                }
+                guideOverlay.style.display = 'none';
+                guideOverlay.style.opacity = '1';
+            }, 300);
+            
+            // Animate train leaving
+            const train = document.querySelector('.train-guide-container');
+            train.style.transform = 'translateX(100%)';
+            train.style.opacity = '0';
+        }
+        
+        // Add guide start button to page
+        const guideStarter = document.createElement('button');
+        guideStarter.id = 'start-guide-btn';
+        guideStarter.className = 'btn btn-primary';
+        guideStarter.innerHTML = '<i class="fas fa-train me-1"></i> Guide Visite';
+        guideStarter.addEventListener('click', startGuide);
+        document.body.appendChild(guideStarter);
+        
+        // Start guide automatically on first visit (with delay for page load)
+        if (!localStorage.getItem('moveEasyGuideShown')) {
+            setTimeout(() => {
+                startGuide();
+                localStorage.setItem('moveEasyGuideShown', 'true');
+            }, 3000);
+        }
+        
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (guideOverlay.style.display === 'flex') {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextBtn.click();
+                } else if (e.key === 'ArrowLeft') {
+                    prevBtn.click();
+                } else if (e.key === 'Escape') {
+                    closeGuide();
+                }
+            }
+        });
+    });
+
+    </script>
+{% endblock %}  

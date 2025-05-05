@@ -1,0 +1,166 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Bienvenue à MoveEasy{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: linear-gradient(135deg, #e8f5f9, #f1f8f9);
+        }
+
+        .welcome-section {
+            position: relative;
+            overflow: hidden;
+            padding: 70px 30px;
+            text-align: center;
+            border-radius: 1.2rem;
+            margin-bottom: 50px;
+            background: #ffffff;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 168, 150, 0.1), transparent 40%),
+                        radial-gradient(circle at 70% 70%, rgba(11, 83, 81, 0.1), transparent 40%);
+            z-index: 0;
+            animation: moveBg 10s linear infinite;
+        }
+
+        @keyframes moveBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome-section-content {
+            position: relative;
+            z-index: 1;
+        }
+.welcome-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #111; /* very dark */
+    text-shadow: none;
+}
+
+.welcome-section h1 .text-dark {
+    color: #000 !important; /* full black */
+}
+
+
+        .welcome-section p {
+            font-size: 1.3rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .dashboard-cards .card {
+            border: none;
+            border-radius: 1.2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, #fdfdfd, #f7f7f7);
+            transition: all 0.3s ease;
+            padding: 25px 20px;
+        }
+
+        .dashboard-cards .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #ffffff, #f0f9f9);
+        }
+
+        .emoji-icon {
+            font-size: 3.5rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.15));
+        }
+
+        .card:hover .emoji-icon {
+            transform: scale(1.15) rotate(6deg);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="welcome-section">
+            <div class="welcome-section-content">
+              <h1>
+    <span class="fw-bold text-dark">👋 Bienvenue {{ user.username }}</span>
+</h1>
+
+                <p>Ravi de vous revoir sur <strong>MoveEasy</strong> 🚄. Accédez rapidement à vos outils et informations principales.</p>
+            </div>
+        </div>
+
+        <div class="row dashboard-cards">
+            <div class="col-md-4 mb-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <div class="emoji-icon">🚆</div>
+                        <h5 class="card-title">Les trains disponibles</h5>
+                        <p class="card-text">Consultez et gérez vos trains facilement.</p>
+                        <a href="{{ path('front_train_list') }}" class="btn btn-primary">Voir les trains</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <div class="emoji-icon">🎟️</div>
+                        <h5 class="card-title">Mes Réservations</h5>
+                        <p class="card-text">Consultez vos réservations récentes et futures voyages.</p>
+                        <a href="{{ path('app_front_reservation_index') }}" class="btn btn-success">Voir réservations</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <div class="emoji-icon">🛠️💬</div>
+                        <h5 class="card-title">Support & Réclamations</h5>
+                        <p class="card-text">Suivez vos réclamations ou contactez le support.</p>
+                        <a href="{{ path('app_reclamation_index') }}" class="btn btn-warning text-white">Accéder au support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

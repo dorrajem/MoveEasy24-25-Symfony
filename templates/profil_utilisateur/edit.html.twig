@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Profil{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+  <h1>Modifier le Profil</h1>
+
+  {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-primary mt-3">Mettre à jour</button>
+  {{ form_end(form) }}
+
+  <a href="{{ path('app_profil_utilisateur_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</div>
+{% endblock %}

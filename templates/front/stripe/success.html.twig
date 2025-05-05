@@ -1,0 +1,103 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}MoveEasy - Paiement Réussi{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --success-color: #2E8B57;
+            --danger-color: #E63946;
+            --background-light: #F8F9FA;
+        }
+
+        .rail-banner {
+            background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75)), 
+                        url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .rail-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(11, 83, 81, 0.3), transparent);
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--success-color);
+            margin-bottom: 20px;
+        }
+
+        .rail-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+        }
+
+        .rail-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="rail-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3 fw-bold"><i class="fas fa-check-circle me-3"></i>Paiement Réussi</h1>
+                    <p class="lead mb-4">Merci pour votre confiance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="form-section">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="mb-3">Votre paiement a été effectué avec succès !</h2>
+                    <p class="lead">Vous recevrez bientôt votre confirmation de réservation par email.</p>
+                    
+                    <a href="{{ path('app_front_reservation_index') }}" class="rail-btn">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à mes réservations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

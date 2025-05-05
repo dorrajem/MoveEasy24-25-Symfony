@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la réclamation{% endblock %}
+
+{% block body %}
+    <h1>Détails de la réclamation #{{ reclamation.id }}</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Catégorie:</strong> {{ reclamation.categorie }}
+            <span class="float-end">
+                {% if reclamation.statut == 'en attente' %}
+                    <span class="badge bg-warning">{{ reclamation.statut }}</span>
+                {% else %}
+                    <span class="badge bg-success">{{ reclamation.statut }}</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong></p>
+            <p>{{ reclamation.description }}</p>
+            
+            <p><strong>Date de soumission:</strong> {{ reclamation.dateSoumission|date('d/m/Y H:i') }}</p>
+            <p><strong>ID Utilisateur:</strong> {{ reclamation.idUtilisateur }}</p>
+            
+            {% if reclamation.reponse %}
+                <hr>
+                <h4>Réponse:</h4>
+                <p>{{ reclamation.reponse }}</p>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('admin_reclamation_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            {% if reclamation.statut == 'en attente' %}
+                <a href="{{ path('admin_reclamation_repondre', {'id': reclamation.id}) }}" class="btn btn-primary">Répondre</a>
+            {% endif %}
+            <form method="post" action="{{ path('admin_reclamation_delete', {'id': reclamation.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

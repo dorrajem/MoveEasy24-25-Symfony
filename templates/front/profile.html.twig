@@ -1,0 +1,54 @@
+{# templates/front/profile.html.twig #}
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Mon Profil – MoveEasy{% endblock %}
+
+{% block body %}
+<div class="container mt-4" style="max-width:600px">
+    <h1>Mon Profil</h1>
+
+    {# Success flash #}
+    {% for msg in app.flashes('success') %}
+      <div class="alert alert-success">{{ msg }}</div>
+    {% endfor %}
+
+    {{ form_start(form, {'attr': {'enctype':'multipart/form-data'}}) }}
+
+      {{ form_row(form.adresse, {
+          label: 'Adresse',
+          attr: { class: 'form-control' }
+      }) }}
+
+      {{ form_row(form.telephone, {
+          label: 'Téléphone',
+          attr: { class: 'form-control' }
+      }) }}
+
+      {# Show current avatar if any #}
+      {% if form.vars.data.photoProfil %}
+        <div class="mb-3">
+          <label class="form-label">Avatar actuel</label><br>
+          <img src="{{ asset('uploads/profiles/' ~ form.vars.data.photoProfil) }}"
+               alt="Avatar" class="rounded-circle" width="100" height="100">
+        </div>
+      {% endif %}
+
+      {# Upload field #}
+      <div class="mb-3">
+        {{ form_label(form.photoProfilFile, 'Avatar (PNG/JPG)') }}
+        {{ form_widget(form.photoProfilFile, {
+            attr: { class: 'form-control' }
+        }) }}
+        {{ form_errors(form.photoProfilFile) }}
+        <small class="form-text text-muted">
+          Téléchargez votre nouvelle photo de profil (max 2 Mo).
+        </small>
+      </div>
+
+      <button class="btn btn-primary">Enregistrer les modifications</button>
+
+    {{ form_end(form) }}
+
+    <a href="{{ path('front_home') }}" class="btn btn-secondary mt-3">← Retour à l’accueil</a>
+</div>
+{% endblock %}

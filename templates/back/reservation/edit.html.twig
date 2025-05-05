@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Réservation{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 700px;">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Modifier la Réservation</h5>
+        </div>
+        <div class="card-body">
+            {# Payment status block #}
+            {% if payment is defined %}
+                {% if payment.statutP == 'Effectué' %}
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Paiement effectué - Vous pouvez confirmer cette réservation
+                    </div>
+                {% elseif payment.statutP is not null %}
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <i class="fas fa-clock me-2"></i>
+                        Paiement {{ payment.statutP }} - La confirmation est désactivée jusqu'au paiement complet
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Aucun paiement enregistré - La confirmation est désactivée
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {{ form_start(form) }}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Date de réservation</label>
+                <div class="form-control-plaintext">{{ reservation.dateR|date('d/m/Y') }}</div>
+                {{ form_widget(form.dateR, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Heure de réservation</label>
+                <div class="form-control-plaintext">{{ reservation.heureR|date('H:i') }}</div>
+                {{ form_widget(form.heureR, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nombre de places</label>
+                <div class="form-control-plaintext">{{ reservation.nbrplace }}</div>
+                {{ form_widget(form.nbrplace, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Type de place</label>
+                <div class="form-control-plaintext">{{ reservation.typeplace }}</div>
+                {{ form_widget(form.typeplace, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Type de train</label>
+                <div class="form-control-plaintext">{{ reservation.typeTrainR }}</div>
+                {{ form_widget(form.typeTrainR, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Destination</label>
+                <div class="form-control-plaintext">{{ reservation.destinationR }}</div>
+                {{ form_widget(form.destinationR, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nom d'utilisateur</label>
+                <div class="form-control-plaintext">{{ reservation.NameUser }}</div>
+                {{ form_widget(form.NameUser, {'attr': {'class': 'd-none'}}) }}
+            </div>
+
+            {# Editable status field #}
+            <div class="mb-3">
+                {{ form_label(form.etatR, "État", {"label_attr": {"class": "form-label fw-semibold"}}) }}
+                {% if payment is defined and payment.statutP != 'Effectué' %}
+                    {{ form_widget(form.etatR, {"attr": {"class": "form-select", "disabled": (form.etatR.vars.value == "Confirmée")}}) }}
+                    <small class="text-muted d-block mt-1"><i class="fas fa-info-circle me-1"></i> La réservation ne peut être confirmée que si le paiement est effectué.</small>
+                {% else %}
+                    {{ form_widget(form.etatR, {"attr": {"class": "form-select"}}) }}
+                {% endif %}
+                {{ form_errors(form.etatR) }}
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_reservation_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

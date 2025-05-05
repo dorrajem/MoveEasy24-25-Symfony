@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Audit Logs{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">🛡️ Historique des modifications</h1>
+
+    <form method="get" action="{{ path('app_audit_index') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="action" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Tous les types d'action --</option>
+                    <option value="CREATE" {% if actionFilter == 'CREATE' %}selected{% endif %}>Création</option>
+                    <option value="UPDATE" {% if actionFilter == 'UPDATE' %}selected{% endif %}>Mise à jour</option>
+                    <option value="DELETE" {% if actionFilter == 'DELETE' %}selected{% endif %}>Suppression</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Entité</th>
+                <th>Action</th>
+                <th>Date</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td><strong>{{ log.entityType }}</strong></td>
+                <td>
+                    {% if log.action == 'CREATE' %}
+                        <span class="badge bg-success">Création</span>
+                    {% elseif log.action == 'UPDATE' %}
+                        <span class="badge bg-primary">Mise à jour</span>
+                    {% elseif log.action == 'DELETE' %}
+                        <span class="badge bg-danger">Suppression</span>
+                    {% else %}
+                        {{ log.action }}
+                    {% endif %}
+                </td>
+                <td>{{ log.loggedAt|date('d/m/Y H:i') }}</td>
+                <td>
+                    {% if log.data %}
+                        <ul class="mb-0">
+                            {% for field, change in log.data %}
+                                <li>
+                                    <strong>{{ field }}</strong> : 
+                                    <span class="text-muted">{{ change.old ?? 'N/A' }}</span>
+                                    →
+                                    <span class="text-success">{{ change.new ?? 'N/A' }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <em class="text-muted">Aucun détail</em>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">Aucun journal d'audit trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+   <div class="d-flex justify-content-center my-4">
+        {{ knp_pagination_render(logs, 'bundles/bootstrap_v5_pagination.html.twig') }}
+    </div>
+</div>
+{% endblock %}

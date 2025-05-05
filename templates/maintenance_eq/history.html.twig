@@ -1,0 +1,20 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Historique des maintenances{% endblock %}
+
+{% block body %}
+    <h1>Historique des maintenances pour {{ equipement.typeEquipementEquipement }}</h1>
+
+    {% if maintenances is not empty %}
+        <ul>
+            {% for maintenance in maintenances %}
+                <li>
+                    {{ maintenance.description }} - {{ maintenance.dateMaintenance|date('d/m/Y') }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune maintenance enregistrée pour cet équipement.</p>
+    {% endif %}
+
+{% endblock %}

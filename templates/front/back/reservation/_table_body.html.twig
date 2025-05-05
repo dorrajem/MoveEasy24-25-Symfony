@@ -1,0 +1,40 @@
+{# templates/back/reservation/_table_body.html.twig #}
+{% for r in reservations %}
+<tr>
+  <td>{{ r.dateR      ? r.dateR|date('d/m/Y') : '' }}</td>
+  <td>{{ r.heureR    ? r.heureR|date('H:i')  : '' }}</td>
+  <td>
+    {% set s = r.etatR|lower %}
+    {% if s in ['confirmée','confirmee'] %}
+      <span class="badge badge-confirmed">{{ r.etatR }}</span>
+    {% elseif s in ['en attente','pending'] %}
+      <span class="badge badge-pending">{{ r.etatR }}</span>
+    {% elseif s in ['annulée','annulee','cancelled'] %}
+      <span class="badge badge-cancelled">{{ r.etatR }}</span>
+    {% else %}
+      {{ r.etatR }}
+    {% endif %}
+  </td>
+  <td>{{ r.nbrplace }}</td>
+  <td>{{ r.typeplace }}</td>
+  <td>{{ r.typeTrainR }}</td>
+  <td>{{ r.destinationR }}</td>
+  <td>{{ r.NameUser }}</td>
+  <td class="action-buttons">
+    <a href="{{ path('app_reservation_edit',{id:r.idR}) }}" class="btn btn-edit">
+      <i class="fas fa-edit"></i> Modifier
+    </a>
+    <form method="post"
+          action="{{ path('app_reservation_delete',{id:r.idR}) }}"
+          onsubmit="return confirm('Supprimer ?');"
+          style="display:inline">
+      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ r.idR) }}">
+      <button class="btn btn-delete"><i class="fas fa-trash"></i>Supprimer</button>
+    </form>
+  </td>
+</tr>
+{% else %}
+<tr>
+  <td colspan="9" class="text-center text-muted">Aucune réservation trouvée</td>
+</tr>
+{% endfor %}

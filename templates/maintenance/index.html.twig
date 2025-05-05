@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des maintenances{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3"><i class="fas fa-tools me-2"></i>Liste des maintenances</h1>
+        <a href="{{ path('app_train_index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Retour à la liste des trains
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>Train</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for maintenance in maintenance_trains %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">
+                                🚆 Train #{{ maintenance.train.idTrain }} ({{ maintenance.train.typeTrain }})
+                            </div>
+                            <a href="{{ path('app_maintenance_train_new', {'idTrain': maintenance.train.idTrain}) }}" class="btn btn-sm btn-outline-success mt-1">
+                                ➕ Ajouter
+                            </a>
+                        </td>
+                        <td class="text-center">{{ maintenance.dateMaintenance|date('d/m/Y') }}</td>
+                        <td>{{ maintenance.description }}</td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill px-3 py-2 
+                                {{ maintenance.statut == 'Planifiée' ? 'bg-warning text-dark' : 
+                                   (maintenance.statut == 'En cours' ? 'bg-primary' : 'bg-success') }}">
+                                {{ maintenance.statut == 'Planifiée' ? '📅' : (maintenance.statut == 'En cours' ? '🛠️' : '✅') }}
+                                {{ maintenance.statut }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ path('app_maintenance_train_show', {'idMaintenance': maintenance.idMaintenance}) }}" class="btn btn-outline-info" title="Afficher">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('app_maintenance_train_edit', {'idMaintenance': maintenance.idMaintenance}) }}" class="btn btn-outline-warning" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" action="{{ path('app_maintenance_train_delete', {'idMaintenance': maintenance.idMaintenance}) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette maintenance ?');" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ maintenance.idMaintenance) }}">
+                                    <button class="btn btn-outline-danger" title="Supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                            Aucune maintenance trouvée.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center my-4">
+    {{ knp_pagination_render(maintenance_trains, 'bundles/bootstrap_v5_pagination.html.twig') }}
+</div>
+
+</div>
+{% endblock %}

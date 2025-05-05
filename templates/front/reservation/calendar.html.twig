@@ -1,0 +1,106 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Calendrier des Réservations{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <style>
+        .fc-toolbar-title {
+            color: #009688;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        #calendar {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .riot-banner {
+            background: linear-gradient(90deg, #009688 0%, #00796b 100%);
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .riot-banner h1 {
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-filter {
+            margin: 0 auto 20px auto;
+            max-width: 400px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="riot-banner">
+        <div class="container">
+            <h1><i class="fas fa-calendar-alt me-2"></i>Calendrier des Réservations</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="status-filter text-center">
+            <label for="statusSelect" class="form-label">Filtrer par statut :</label>
+            <select id="statusSelect" class="form-select">
+                <option value="all">Tous les statuts</option>
+                {% for key, label in statuses %}
+                    <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div id="calendar"></div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var originalEvents = {{ events|raw }};
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: originalEvents,
+                locale: 'fr',
+                timeZone: 'local',
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    const numericId = parseInt(info.event.id);
+                    if (!isNaN(numericId)) {
+                        window.location.href = '/reservation/' + numericId;
+                    } else {
+                        alert("ID de réservation invalide.");
+                    }
+                }
+            });
+
+            calendar.render();
+
+            document.getElementById('statusSelect').addEventListener('change', function () {
+                const selectedStatus = this.value;
+
+                const filtered = selectedStatus === 'all'
+                    ? originalEvents
+                    : originalEvents.filter(event => event.status === selectedStatus);
+
+                calendar.removeAllEvents();
+                calendar.addEventSource(filtered);
+            });
+        });
+    </script>
+{% endblock %}

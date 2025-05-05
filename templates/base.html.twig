@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {% block stylesheets %}{% endblock %}
+</head>
+
+{% block css %}
+<style>
+    :root {
+        --primary-bg: #2B2D3E;
+        --primary-dark: #1F2233;
+        --primary-light: #394165;
+        --secondary-bg: #f8f9fa;
+        --white: #ffffff;
+        --text-primary: #ddd;
+        --text-secondary: #aaa;
+        --border-color: #3a3f58;
+        --hover-bg: #3c405a;
+        --active-bg: #444b6e;
+        --danger: #FF5252;
+        --transition: all 0.3s ease;
+        --border-radius: 8px;
+    }
+
+    body {
+        background-color: var(--secondary-bg);
+    }
+
+    .sidebar {
+        background-color: var(--primary-bg);
+        color: var(--text-primary);
+        min-width: 220px;
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar h4 {
+        color: var(--white);
+        font-weight: 700;
+    }
+
+    .sidebar .nav-link {
+        color: var(--text-primary);
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        transition: var(--transition);
+    }
+
+    .sidebar .nav-link:hover {
+        background-color: var(--hover-bg);
+        color: var(--white);
+    }
+
+    .sidebar .nav-link.fw-bold,
+    .sidebar .nav-link.active {
+        background-color: var(--active-bg);
+        color: var(--white);
+    }
+
+    .submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        opacity: 0;
+    }
+
+    .submenu.show {
+        max-height: 500px;
+        opacity: 1;
+    }
+
+    .nav-link .fa-chevron-down {
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link .fa-chevron-down.rotate {
+        transform: rotate(180deg);
+    }
+
+    .user-box {
+        border-top: 1px solid var(--border-color);
+        padding: 15px 10px 5px 10px;
+    }
+
+    .user-box .image img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+
+    .user-box .info {
+        margin-left: 10px;
+    }
+
+    .user-box .info span {
+        font-weight: 600;
+        color: var(--white);
+    }
+
+    .logout-link {
+        border-top: 1px solid var(--border-color);
+        padding: 15px 10px;
+    }
+
+    .logout-link a {
+        color: var(--danger);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        transition: var(--transition);
+    }
+
+    .logout-link a:hover {
+        color: #ff7b7b;
+        text-decoration: none;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 30px;
+    }
+
+    .main-content h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+
+    .alert {
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            min-width: 100%;
+            min-height: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+<body class="d-flex">
+
+    {# === Sidebar (Left Column) === #}
+    <div class="sidebar">
+        <h4 class="mb-4">
+            <i class="fas fa-cogs me-2"></i> Admin
+        </h4>
+
+        <ul class="nav flex-column">
+            <!-- Tableaux de bord Section -->
+            <li class="nav-item mb-2">
+                <a class="nav-link d-flex justify-content-between align-items-center
+                    {% if app.request.attributes.get('_route') starts with 'app_train_dashboard' 
+                        or app.request.attributes.get('_route') starts with 'app_reservation_dashboard' 
+                        or app.request.attributes.get('_route') == 'admin_dashboard' %}fw-bold{% endif %}"
+                    href="#"
+                    onclick="toggleSubmenu(event)">
+                    <span><i class="fas fa-chart-line me-2"></i> Tableaux de bord</span>
+                    <i class="fas fa-chevron-down small
+                        {% if app.request.attributes.get('_route') starts with 'app_train_dashboard' 
+                            or app.request.attributes.get('_route') starts with 'app_reservation_dashboard' 
+                            or app.request.attributes.get('_route') == 'admin_dashboard' %}rotate{% endif %}">
+                    </i>
+                </a>
+                <div class="submenu 
+                    {% if app.request.attributes.get('_route') starts with 'app_train_dashboard' 
+                        or app.request.attributes.get('_route') starts with 'app_reservation_dashboard' 
+                        or app.request.attributes.get('_route') == 'admin_dashboard' %}show{% endif %}">
+                    <ul class="nav flex-column ms-3 mt-2">
+                        <li class="nav-item mb-2">
+                            <a class="nav-link 
+                                {% if app.request.attributes.get('_route') starts with 'app_train_dashboard' %}fw-bold{% endif %}"
+                                href="{{ path('app_train_dashboard') }}">
+                                🚆 Dashboard des Trains
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link 
+                                {% if app.request.attributes.get('_route') starts with 'app_reservation_dashboard' %}fw-bold{% endif %}"
+                                href="{{ path('app_reservation_dashboard') }}">
+                                🧾 Dashboard des Réservations
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link 
+                                {% if app.request.attributes.get('_route') == 'admin_dashboard' %}fw-bold{% endif %}"
+                                href="{{ path('admin_dashboard') }}">
+                                📝 Dashboard Global (Réclamations & Avis)
+                            </a>
+                        </li>
+                        <li class="nav-item mb-2">
+                            <a class="nav-link 
+                                {% if app.request.attributes.get('_route') == 'app_back' %}fw-bold{% endif %}"
+                                href="{{ path('app_back') }}">
+                                📝 Dashboard des Utilisateurs
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Audit Logs -->
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'app_audit_index' %}fw-bold{% endif %}"
+                    href="{{ path('app_audit_index') }}">
+                    <i class="fas fa-clipboard-list me-2"></i> Audit Logs des trains
+                </a>
+            </li>
+
+            <!-- Liste des Trains -->
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'app_train_index' %}fw-bold{% endif %}"
+                    href="{{ path('app_train_index') }}">
+                    <i class="fas fa-train me-2"></i> Liste des Trains
+                </a>
+            </li>
+
+            <!-- ✅ Reclamations -->
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'admin_reclamation_' %}fw-bold{% endif %}"
+                    href="{{ path('admin_reclamation_index') }}">
+                    <i class="fas fa-comment-dots me-2"></i> Réclamations
+                </a>
+            </li>
+
+            <!-- Réservations -->
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'app_reservation_index' %}fw-bold{% endif %}"
+                    href="{{ path('app_reservation_index') }}">
+                    <i class="fas fa-ticket-alt me-2"></i> Réservations
+                </a>
+            </li>
+
+            <!-- ✅ Avis -->
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'admin_avis_' %}fw-bold{% endif %}"
+                    href="{{ path('admin_avis_index') }}">
+                    <i class="fas fa-star me-2"></i> Avis
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'list_equipements' %}fw-bold{% endif %}"
+                    href="{{ path('list_equipements') }}">
+                    <i class="fas fa-ticket-alt me-2"></i> Equipements
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'list_maintenance' %}fw-bold{% endif %}"
+                    href="{{ path('list_maintenance') }}">
+                    <i class="fas fa-ticket-alt me-2"></i> Maintenance equipements
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'itineraire_index' %}fw-bold{% endif %}"
+                    href="{{ path('itineraire_index') }}">
+                    <i class="fas fa-map me-2"></i> Itineraires
+                </a>
+            </li>
+             <li class="nav-item mb-2">
+                <a class="nav-link 
+                    {% if app.request.attributes.get('_route') starts with 'station_index' %}fw-bold{% endif %}"
+                    href="{{ path('station_index') }}">
+                    <i class="fas fa-route me-2"></i> Stations
+                </a>
+            </li>
+        </ul>
+
+        {# === User Box + Logout (Bottom) === #}
+        <div class="mt-auto">
+            {% if app.user %}
+                <div class="d-flex align-items-center user-box">
+                    <div class="image">
+                        <img src="{{ asset('images/admin.png') }}"
+                             alt="Avatar Administrateur"
+                             class="rounded-circle">
+                    </div>
+                    <div class="info ms-2">
+                        <span>{{ app.user.prenom }} {{ app.user.nom }}</span><br>
+                        <small class="text-secondary">Administrateur</small>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="logout-link">
+                <a href="{{ path('app_logout') }}">
+                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# === Main Content Area === #}
+    <div class="main-content">
+        <h2>{% block page_title %}{% endblock %}</h2>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSubmenu(event) {
+            event.preventDefault();
+            const link = event.currentTarget;
+            const submenu = link.nextElementSibling;
+            submenu.classList.toggle('show');
+
+            const icon = link.querySelector('.fa-chevron-down');
+            icon.classList.toggle('rotate');
+        }
+    </script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

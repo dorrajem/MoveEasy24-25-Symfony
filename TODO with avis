@@ -1,0 +1,3 @@
+admin index to integrate in dashboard.html.twig
+admin index to integrate in basehtml.twig
+base.html.twig integrate logout and profile in it from the actual user recent work

@@ -1,0 +1,23 @@
+{# _delete_form.html.twig - Formulaire de suppression avec confirmation en JS #}
+<form method="post" action="{{ path('app_avis_delete', {'id': avis.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avis ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avis.id) }}">
+    <button class="btn btn-danger">
+        <i class="fas fa-trash-alt me-2"></i>Supprimer
+    </button>
+</form>
+
+{# Script JS pour la confirmation de suppression #}
+{% block javascripts %}
+<script>
+    document.querySelectorAll('.js-delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const avisId = this.getAttribute('data-avis-id');
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer cet avis #${avisId} ?`)) {
+                this.submit();
+            }
+        });
+    });
+</script>
+{% endblock %}

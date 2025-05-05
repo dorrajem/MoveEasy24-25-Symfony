@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'avis{% endblock %}
+
+{% block body %}
+    <h1>Détails de l'avis #{{ avis.id }}</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Note:</strong> 
+            {% for i in 1..5 %}
+                {% if i <= avis.note %}
+                    <span class="text-warning">★</span>
+                {% else %}
+                    <span class="text-secondary">☆</span>
+                {% endif %}
+            {% endfor %}
+            <span class="float-end">
+                <strong>Date:</strong> {{ avis.dateAvis|date('d/m/Y') }}
+            </span>
+        </div>
+        <div class="card-body">
+            <p><strong>Contenu:</strong></p>
+            <p>{{ avis.contenu }}</p>
+            
+            <p><strong>ID Utilisateur:</strong> {{ avis.idUtilisateur }}</p>
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('admin_avis_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            <form method="post" action="{{ path('admin_avis_delete', {'id': avis.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avis?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avis.id) }}">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

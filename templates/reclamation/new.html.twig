@@ -1,0 +1,329 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}
+    {{ reclamation.id ? : 'Nouvelle Réclamation' }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --secondary-color: #0B5351;
+            --accent-color: #F3752B;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --info-color: #3B82F6;
+            --text-dark: #1F2937;
+            --text-medium: #4B5563;
+            --text-light: #F9FAFB;
+            --background-light: #F9FAFB;
+            --background-medium: #E5E7EB;
+            --background-dark: #111827;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
+        .riot-banner {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-medium));
+            color: var(--text-light);
+            padding: 60px 0;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .riot-card {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .riot-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: scale(1.01);
+        }
+
+        .riot-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .riot-btn:hover {
+            background-color: #d36224;
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            color: var(--text-medium);
+            font-weight: 600;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--background-medium);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-medium);
+            box-shadow: 0 0 0 0.2rem rgba(0, 168, 150, 0.25);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .alert-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .alert-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+            color: var(--primary-color);
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--background-medium);
+            color: var(--text-medium);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--background-medium);
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-medium);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="riot-banner text-center">
+        <div class="container">
+            <h1 class="display-6 fw-bold">
+                {{ reclamation.id ? 'Modifier la Réclamation #' ~ reclamation.id : 'Soumettre une Nouvelle Réclamation' }}
+            </h1>
+            <p class="lead text-light">Aidez-nous à mieux vous servir en partageant votre retour</p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card riot-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ reclamation.id ? 'Modifier les informations' : 'Formulaire de réclamation' }}</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% for label, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                            <div class="mb-4">
+                                {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.categorie, {'attr': {'class': 'form-select'}}) }}
+                                {{ form_errors(form.categorie) }}
+                                <div class="help-text mt-1">Choisissez une catégorie pertinente pour votre réclamation.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 6}}) }}
+                                {{ form_errors(form.description) }}
+                                <div class="help-text mt-1">Soyez précis et clair dans votre description.</div>
+                            </div>
+
+                            {% if form.statut is defined %}
+                                <div class="mb-4">
+                                    {{ form_label(form.statut, null, {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+                                    {{ form_errors(form.statut) }}
+                                </div>
+                            {% endif %}
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ path('app_reclamation_index') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Annuler
+                                </a>
+                                <button type="submit" class="riot-btn">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    {{ reclamation.id ? 'Mettre à jour' : 'Soumettre' }}
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <div class="card riot-card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Catégories disponibles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            {% set categories = [
+                                {'icon': 'fa-box', 'title': 'Annulation', 'desc': 'Produits annulés ou non reçus'},
+                                {'icon': 'fa-cogs', 'title': 'Service', 'desc': 'Problèmes de qualité de service'},
+                                {'icon': 'fa-truck', 'title': 'Retard', 'desc': 'Livraison tardive'},
+                                {'icon': 'fa-headset', 'title': 'Confort', 'desc': 'Relation avec le support'}
+                            ] %}
+                            {% for cat in categories %}
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-3 border rounded bg-light shadow-sm">
+                                        <i class="fas {{ cat.icon }} category-icon"></i>
+                                        <div>
+                                            <strong>{{ cat.title }}</strong>
+                                            <p class="mb-0 small text-muted">{{ cat.desc }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card riot-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Conseils</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for tip in [
+                            {'title': 'Soyez précis', 'text': 'Donnez un maximum de détails.'},
+                            {'title': 'Soyez concis', 'text': 'Aller à l’essentiel améliore le traitement.'},
+                            {'title': 'Choisissez la bonne catégorie', 'text': 'Pour que votre demande aille au bon endroit.'},
+                            {'title': 'Restez courtois', 'text': 'Cela facilite les échanges !'}
+                        ] %}
+                            <div class="mb-3">
+                                <h6><i class="fas fa-check-circle text-success me-2"></i> {{ tip.title }}</h6>
+                                <p class="small text-muted">{{ tip.text }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="card riot-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Autres options</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Vous pouvez aussi nous contacter via :</p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary"><i class="fas fa-phone-alt me-2"></i> Appel</button>
+                            <button class="btn btn-outline-secondary"><i class="fas fa-question-circle me-2"></i> FAQ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}

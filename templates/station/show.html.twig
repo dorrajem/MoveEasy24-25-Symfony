@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Station Details{% endblock %}
+
+{% block body %}
+<h1 class="h3 mb-4 text-gray-800">Station Details</h1>
+
+<table class="table table-bordered">
+    <tr><th>ID</th><td>{{ station.id }}</td></tr>
+    <tr><th>Name</th><td>{{ station.nomStation }}</td></tr>
+    <tr><th>Status</th><td>{{ station.statut }}</td></tr>
+    <tr><th>Longitude</th><td>{{ station.longitude }}</td></tr>
+    <tr><th>Latitude</th><td>{{ station.latitude }}</td></tr>
+</table>
+
+<a href="{{ path('station_index') }}" class="btn btn-secondary">Back</a>
+<a href="{{ path('station_edit', {'id': station.id}) }}" class="btn btn-warning">Edit</a>
+<a href="{{ path('station_delete', {'id': station.id}) }}" class="btn btn-danger">Delete</a>
+{% endblock %}

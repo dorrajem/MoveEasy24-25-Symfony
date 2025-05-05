@@ -1,0 +1,42 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Accueil - MoveEasy{% endblock %}
+
+{% block body %}
+<!-- Votre contenu de la page d'accueil -->
+<div class="hero text-center" style="background: url('{{ asset('images/trains.jpg') }}') no-repeat center center/cover; height:650px;">
+    <div class="d-flex align-items-center justify-content-center h-100">
+        <div>
+            <h1>Bienvenue sur MoveEasy</h1>
+            <p>Transport ferroviaire accessible pour tous</p>
+            <a href="{{ path('front_booking') }}" class="btn btn-light mt-3">Réserver maintenant</a>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <h2 class="text-center section-title mb-4">Nos Services</h2>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <i class="fas fa-ticket fa-3x text-success mb-3"></i>
+            <h5>Réservation Rapide</h5>
+            <p>Réservez vos trajets en toute simplicité.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-wheelchair fa-3x text-success mb-3"></i>
+            <h5>Accessibilité Garantie</h5>
+            <p>Des équipements pour tous les voyageurs.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-comment-dots fa-3x text-success mb-3"></i>
+            <h5>Avis et Réclamations</h5>
+            <p>Partagez votre expérience ou signalez un problème.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="text-center section-title mb-4">Nos Stations</h2>
+    <div id="map" style="height: 300px;"></div>
+</section>
+{% endblock %}

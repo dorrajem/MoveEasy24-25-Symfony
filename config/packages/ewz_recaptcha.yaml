@@ -1,0 +1,6 @@
+ewz_recaptcha:
+    public_key:  '%env(RECAPTCHA_SITE_KEY)%'   # ta clé site v2
+    private_key: '%env(RECAPTCHA_SECRET)%'     # ton secret v2
+    # hôte par défaut : www.google.com
+    enabled:     true
+    locale_key:  'fr'                         # pour la langue du widget

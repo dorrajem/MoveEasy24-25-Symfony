@@ -1,0 +1,15 @@
+# config/packages/liip_imagine.yaml
+liip_imagine:
+    resolvers:
+        default:
+            web_path: ~
+
+    filter_sets:
+        cache: ~
+
+        avatar_35x35:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [35, 35]
+                    mode: outbound

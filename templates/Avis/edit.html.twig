@@ -1,0 +1,463 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}MoveEasy - Modifier un avis{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --secondary-color: #0B5351;
+            --accent-color: #F3752B;
+            --success-color: #2E8B57;
+            --warning-color: #FFC857;
+            --danger-color: #E63946;
+            --text-dark: #2A2D34;
+            --text-light: #F8F9FA;
+            --background-light: #F8F9FA;
+            --background-medium: #E9ECEF;
+        }
+
+        .rail-banner {
+            background: linear-gradient(rgba(11, 83, 81, 0.85), rgba(0, 168, 150, 0.75)), 
+                        url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .rail-banner::before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(11, 83, 81, 0.3), transparent);
+        }
+
+        .rail-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+            overflow: hidden;
+        }
+
+        .rail-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rail-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .rail-btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-medium);
+            color: var(--primary-medium);
+        }
+
+        .rail-btn-outline:hover {
+            background-color: var(--primary-medium);
+            color: white;
+        }
+        
+        .rail-btn-danger {
+            background-color: transparent;
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .rail-btn-danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-medium));
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+
+        .form-header::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(153, 213, 207, 0.25);
+        }
+
+        /* Styles pour le système d'étoiles */
+        .rating-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        
+        .star-rating input {
+            display: none;
+        }
+        
+        .star-rating label {
+            color: var(--warning-color);
+            font-size: 2rem;
+            padding: 0 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: var(--warning-color);
+            text-shadow: 0 0 5px rgba(255, 200, 87, 0.5);
+        }
+        
+        .star-rating input:checked + label {
+            transform: scale(1.1);
+        }
+        
+        .rating-description {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            min-height: 24px;
+            font-style: italic;
+        }
+        
+        .hidden-rating-input {
+            display: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-medium));
+            color: white;
+        }
+        
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+            overflow: hidden;
+        }
+        
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="rail-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 mb-3 fw-bold"><i class="fas fa-edit me-3"></i>Modifier un Avis</h1>
+                    <p class="lead mb-4">Modifiez votre expérience avec nos services ferroviaires</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <a href="{{ path('app_avis_index') }}" class="rail-btn-outline btn">
+                    <i class="fas fa-arrow-left me-2"></i>Retour à la liste des avis
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="form-section">
+                    <div class="form-header">
+                        <h2 class="mb-0">
+                            <i class="fas fa-comment-dots me-2"></i>Modifier l'avis #{{ avis.id }}
+                        </h2>
+                    </div>
+                    
+                    <div class="card-body p-4 p-lg-5">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">ID Utilisateur</label>
+                                {{ form_widget(form.id_utilisateur, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Entrez votre identifiant'
+                                    }
+                                }) }}
+                                <div class="form-text text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Cet identifiant sera associé à votre avis
+                                </div>
+                                {{ form_errors(form.id_utilisateur) }}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Date de l'avis</label>
+                                {{ form_widget(form.dateAvis, {
+                                    'attr': {
+                                        'class': 'form-control'
+                                    }
+                                }) }}
+                                {{ form_errors(form.dateAvis) }}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Votre évaluation</label>
+                                
+                                <div class="rating-wrapper">
+                                    <div class="star-rating">
+                                        {% for i in 5..1 %}
+                                            <input type="radio" id="star-{{ i }}" name="rating" value="{{ i }}" 
+                                                {% if form.note.vars.value == i %}checked{% endif %}>
+                                            <label for="star-{{ i }}" title="{{ i }} étoiles">
+                                                <i class="fas fa-star"></i>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="rating-description" id="rating-description">
+                                        {% if form.note.vars.value %}
+                                            {% set descriptions = {
+                                                1: 'Très insatisfait - Mauvaise expérience',
+                                                2: 'Insatisfait - Quelques problèmes',
+                                                3: 'Moyen - Correct mais peut mieux faire',
+                                                4: 'Satisfait - Bonne expérience',
+                                                5: 'Excellent - Service exceptionnel'
+                                            } %}
+                                            {{ descriptions[form.note.vars.value] }}
+                                        {% else %}
+                                            Cliquez sur les étoiles pour noter
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                {{ form_widget(form.note, {'attr': {'class': 'hidden-rating-input'}}) }}
+                                {{ form_errors(form.note) }}
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Votre commentaire</label>
+                                {{ form_widget(form.contenu, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'rows': 5,
+                                        'placeholder': 'Partagez votre expérience avec nos services...'
+                                    }
+                                }) }}
+                                {{ form_errors(form.contenu) }}
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="rail-btn-danger btn" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fas fa-trash-alt me-2"></i>Supprimer
+                                </button>
+                                
+                                <div>
+                                    <a href="{{ path('app_avis_index') }}" class="rail-btn-outline btn me-2">
+                                        <i class="fas fa-times me-2"></i>Annuler
+                                    </a>
+                                    <button type="submit" class="rail-btn">
+                                        <i class="fas fa-save me-2"></i>Enregistrer
+                                    </button>
+                                </div>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Cette action est irréversible.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="rail-btn-outline btn" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_avis_delete', {'id': avis.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ avis.id) }}">
+                        <button type="submit" class="rail-btn-danger btn">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li class="mb-2"><a href="{{ path('app_avis_index') }}" class="text-white text-decoration-none">Avis</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingInputs = document.querySelectorAll('.star-rating input');
+            const ratingDescription = document.getElementById('rating-description');
+            const symfonyNoteInput = document.getElementById('{{ form.note.vars.id }}');
+            
+            const ratingDescriptions = {
+                1: 'Très insatisfait - Mauvaise expérience',
+                2: 'Insatisfait - Quelques problèmes',
+                3: 'Moyen - Correct mais peut mieux faire',
+                4: 'Satisfait - Bonne expérience',
+                5: 'Excellent - Service exceptionnel'
+            };
+            
+            // Initialisation si note existante
+            if (symfonyNoteInput.value) {
+                ratingDescription.textContent = ratingDescriptions[symfonyNoteInput.value];
+            }
+            
+            // Gestion du clic sur les étoiles
+            ratingInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const value = this.value;
+                    symfonyNoteInput.value = value;
+                    ratingDescription.textContent = ratingDescriptions[value];
+                });
+            });
+            
+            // Gestion du survol
+            document.querySelectorAll('.star-rating label').forEach(label => {
+                label.addEventListener('mouseover', function() {
+                    const starValue = this.htmlFor.split('-')[1];
+                    ratingDescription.textContent = `Noter avec ${starValue} étoile(s) - ${ratingDescriptions[starValue]}`;
+                });
+                
+                label.addEventListener('mouseout', function() {
+                    const checkedInput = document.querySelector('.star-rating input:checked');
+                    ratingDescription.textContent = checkedInput 
+                        ? ratingDescriptions[checkedInput.value] 
+                        : 'Cliquez sur les étoiles pour noter';
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,4 @@
+# config/routes/liip_imagine.yaml
+liip_imagine:
+    resource: "@LiipImagineBundle/Resources/config/routing.yaml"
+    prefix:   /_imagine

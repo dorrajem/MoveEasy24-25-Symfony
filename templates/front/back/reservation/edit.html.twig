@@ -1,0 +1,345 @@
+{# templates/back/reservation/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la réservation{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-bg: #3F51B5;
+            --primary-light: #E8EAF6;
+            --primary-dark: #303F9F;
+            --button-blue: #2196F3;
+            --button-red: #F44336;
+            --button-green: #4CAF50;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --border-color: #EEEEEE;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+        }
+
+        .pcoded-content {
+            margin-left: 200px;
+            padding: 24px;
+            transition: var(--transition);
+            width: calc(100% - 200px);
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 992px) {
+            .pcoded-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 16px;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+
+        .card h2 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 16px;
+        }
+
+        .card h2 i {
+            margin-right: 12px;
+            color: var(--primary-bg);
+        }
+
+        .reservations-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--button-red);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus:not([readonly]) {
+            outline: none;
+            border-color: var(--primary-bg);
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+        }
+
+        .form-control[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .form-error {
+            color: var(--button-red);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            font-weight: 500;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background-color: var(--button-blue);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #9E9E9E;
+            color: white;
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .payment-status {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .payment-complete {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .payment-pending {
+            background-color: #FFF8E1;
+            color: #F57F17;
+            border-left: 4px solid #FFC107;
+        }
+
+        .payment-none {
+            background-color: #FFEBEE;
+            color: #C62828;
+            border-left: 4px solid #F44336;
+        }
+
+        /* For hidden fields */
+        .hidden-field {
+            display: none;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Read-only fields styling */
+        .readonly-field {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="pcoded-content">
+    <div class="card">
+        <h2><i class="fas fa-edit"></i> Modifier la réservation</h2>
+
+        {% if payment is defined %}
+            {% if payment.statutP == 'Effectué' %}
+                <div class="payment-status payment-complete">
+                    <i class="fas fa-check-circle"></i> Paiement effectué - Vous pouvez confirmer cette réservation
+                </div>
+            {% elseif payment.statutP is not null %}
+                <div class="payment-status payment-pending">
+                    <i class="fas fa-clock"></i> Paiement {{ payment.statutP }} - La confirmation est désactivée jusqu'au paiement complet
+                </div>
+            {% else %}
+                <div class="payment-status payment-none">
+                    <i class="fas fa-exclamation-triangle"></i> Aucun paiement enregistré - La confirmation est désactivée
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {{ form_start(form, {"attr": {"class": "reservations-form"}}) }}
+            
+            {# Hide ID fields #}
+            <div class="hidden-field">
+                {{ form_widget(form.idR) }}
+                {{ form_widget(form.iduser) }}
+                {{ form_widget(form.idTrain) }}
+                {{ form_widget(form.idItiner) }}
+            </div>
+            
+            {# Display read-only fields #}
+            <div class="form-group">
+                <label class="form-label">Date de réservation</label>
+                <div class="readonly-field">{{ reservation.dateR|date('d/m/Y') }}</div>
+                {{ form_widget(form.dateR, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Heure de réservation</label>
+                <div class="readonly-field">{{ reservation.heureR|date('H:i') }}</div>
+                {{ form_widget(form.heureR, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre de places</label>
+                <div class="readonly-field">{{ reservation.nbrplace }}</div>
+                {{ form_widget(form.nbrplace, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Type de place</label>
+                <div class="readonly-field">{{ reservation.typeplace }}</div>
+                {{ form_widget(form.typeplace, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Type de train</label>
+                <div class="readonly-field">{{ reservation.typeTrainR }}</div>
+                {{ form_widget(form.typeTrainR, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Destination</label>
+                <div class="readonly-field">{{ reservation.destinationR }}</div>
+                {{ form_widget(form.destinationR, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nom d'utilisateur</label>
+                <div class="readonly-field">{{ reservation.NameUser }}</div>
+                {{ form_widget(form.NameUser, {'attr': {'class': 'hidden-field'}}) }}
+            </div>
+            
+            {# Editable status field #}
+            <div class="form-group">
+                {{ form_label(form.etatR, "État", {"label_attr": {"class": "form-label required-field"}}) }}
+                {% if payment is defined and payment.statutP != 'Effectué' %}
+                    {{ form_widget(form.etatR, {"attr": {"class": "form-control", "disabled": (form.etatR.vars.value == "Confirmée")}}) }}
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">La réservation ne peut être confirmée que si le paiement est effectué.</span>
+                    </div>
+                {% else %}
+                    {{ form_widget(form.etatR, {"attr": {"class": "form-control"}}) }}
+                {% endif %}
+                {{ form_errors(form.etatR) }}
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ path('app_reservation_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+            
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

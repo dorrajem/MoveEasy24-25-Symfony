@@ -1,0 +1,96 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Liste des équipements{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .navbar-custom {
+            background-color: #1f6f68;
+        }
+
+        .navbar-custom .nav-link {
+            color: #ffffffcc;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #ffffff;
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 128, 0, 0.2);
+        }
+
+        .navbar-brand {
+            color: white !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+
+<!-- ✅ Cartes stylisées -->
+<div class="container my-5">
+    <div class="row gy-4">
+        {% for eq in equipements %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-lg border-0 position-relative card-hover"
+                     style="border-left: 5px solid {% if eq.statut == 'Disponible' %}#218838{% else %}#c82333{% endif %};">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 text-primary">
+                            <i class="fas fa-toolbox me-2"></i>{{ eq.typeEquipement }}
+                        </h5>
+
+                        <hr class="my-2" style="border-top: 1px solid #c8e6c9;">
+
+                        <p class="mb-1">
+                            <i class="fas fa-train text-success me-2"></i>
+                            <strong>Train :</strong> {{ eq.idTrain ?? 'Non défini' }}
+                        </p>
+
+                        <hr class="my-2" style="border-top: 1px solid #a5d6a7;">
+
+                        <p class="mb-1">
+                            <i class="fas fa-box text-success me-2"></i>
+                            <strong>Quantité :</strong> {{ eq.quantiteDisponible ?? 0 }}
+                        </p>
+
+                        <hr class="my-2" style="border-top: 1px solid #81c784;">
+
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle text-success me-2"></i>
+                            <strong>Statut :</strong>
+                            {% if eq.statut == 'Disponible' %}
+                                <span class="badge bg-success">{{ eq.statut }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ eq.statut ?? 'N/A' }}</span>
+                            {% endif %}
+                        </p>
+
+                        <!-- ✅ QR Code affiché directement via balise <img> -->
+                        <div class="text-center mt-3">
+                            <img src="{{ path('generate_qr_code', { idEquipement: eq.idEquipement }) }}"
+                                 alt="QR Code pour l'équipement"
+                                 style="width: 100px; height: 100px;">
+                            <p class="text-muted small mt-1">Scan pour voir les maintenances</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center text-muted">
+                Aucun équipement trouvé.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

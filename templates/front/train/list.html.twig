@@ -1,0 +1,146 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Nos Trains{% endblock %}
+
+{% block body %}
+
+
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Liste des Trains</h1>
+
+    <div class="row mb-4 justify-content-center">
+        <div class="col-md-3">
+            <select id="statut-filter" class="form-select">
+                <option value="">Tous les statuts</option>
+                <option value="En service">En service</option>
+                <option value="En maintenance">En maintenance</option>
+                <option value="Hors service">Hors service</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <input type="date" id="date-filter" class="form-control" placeholder="Date mise en service">
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button id="confirm-filter" class="btn btn-custom-green custom-green-btn" type="button">
+                <span id="filter-btn-text">Filtrer</span>
+                <span id="filter-btn-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button id="reset-filter" class="btn btn-outline-secondary">Réinitialiser</button>
+        </div>
+    </div>
+
+    <div id="train-list" class="row">
+        {% include 'front/train/_train_cards.html.twig' %}
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        {{ knp_pagination_render(trains, 'bundles/bootstrap_v5_pagination.html.twig') }}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const filterBtn = document.getElementById('confirm-filter');
+    const resetBtn = document.getElementById('reset-filter');
+    const filterBtnText = document.getElementById('filter-btn-text');
+    const filterBtnSpinner = document.getElementById('filter-btn-spinner');
+    const statutSelect = document.getElementById('statut-filter');
+    const dateInput = document.getElementById('date-filter');
+    const trainList = document.getElementById('train-list');
+
+    /**
+     * Fetch trains with optional filter parameters.
+     * @param {string} params - Query string parameters
+     */
+    function fetchTrains(params = '') {
+        filterBtn.disabled = true;
+        filterBtn.setAttribute('aria-busy', 'true');
+        filterBtnText.classList.add('d-none');
+        filterBtnSpinner.classList.remove('d-none');
+
+        // Use window.location.origin to build the full URL dynamically
+        const url = `${window.location.origin}/front/trains/filter${params ? '?' + params : ''}`;
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur de réponse: ${response.status}`);
+            return response.text();
+        })
+        .then(html => {
+            const content = html.trim();
+            trainList.innerHTML = content !== '' ? content : `
+                <div class="col-12 text-center mt-5">
+                    <div class="alert alert-warning">
+                        🚆 Aucun train trouvé pour ces critères.
+                    </div>
+                </div>
+            `;
+        })
+        .catch(err => {
+            trainList.innerHTML = `
+                <div class="col-12 text-danger text-center mt-5">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    Erreur lors du chargement des trains.
+                </div>
+            `;
+            console.error('Erreur AJAX:', err);
+        })
+        .finally(() => {
+            filterBtn.disabled = false;
+            filterBtn.removeAttribute('aria-busy');
+            filterBtnText.classList.remove('d-none');
+            filterBtnSpinner.classList.add('d-none');
+        });
+    }
+
+    filterBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const selectedStatut = statutSelect.value;
+        const selectedDate = dateInput.value;
+
+        const params = new URLSearchParams();
+        if (selectedStatut) params.append('statut', selectedStatut);
+        if (selectedDate) params.append('date', selectedDate);
+
+        fetchTrains(params.toString());
+    });
+
+    resetBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        statutSelect.value = '';
+        dateInput.value = '';
+        fetchTrains(); // No params -> load all trains
+    });
+
+    /**
+     * 🗺️ Initialize Leaflet map safely (only if the map container exists)
+     */
+    const mapElement = document.getElementById('map');
+    if (mapElement) {
+        var map = L.map('map').setView([36.8, 10.2], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        setTimeout(() => {
+            L.marker([36.8065, 10.1815]).addTo(map).bindPopup('Tunis Station').openPopup();
+        }, 500);
+        setTimeout(() => {
+            L.marker([35.8256, 10.6084]).addTo(map).bindPopup('Sousse Station');
+        }, 1000);
+    }
+});
+</script>
+
+{% endblock %}

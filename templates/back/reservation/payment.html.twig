@@ -1,0 +1,459 @@
+{# templates/back/reservation/payment.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Paiement - Réservation #{{ reservation.idR }}{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-bg: #2B2D3E;
+            --button-blue: #03A9F4;
+            --button-red: #FF5252;
+            --button-green: #8BC34A;
+            --button-purple: #9C27B0;
+            --button-orange: #FF9800;
+        }
+
+        .pcoded-content {
+            margin-left: 200px;
+            padding: 30px;
+            width: calc(100% - 200px);
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 992px) {
+            .pcoded-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 15px;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-bg);
+        }
+
+        .payment-details {
+            margin-top: 20px;
+        }
+
+        .payment-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--button-blue);
+        }
+
+        .reservation-section {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--button-orange);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 0;
+            color: var(--primary-bg);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            width: 180px;
+            color: #555;
+        }
+
+        .info-value {
+            flex-grow: 1;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #FFD54F; /* amber */
+            color: #000;
+        }
+
+        .status-completed {
+            background-color: var(--button-green);
+            color: #fff;
+        }
+
+        .status-canceled {
+            background-color: var(--button-red);
+            color: #fff;
+        }
+
+        .form-container {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .form-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--button-blue);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(3, 169, 244, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background-color: var(--button-blue);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--button-green);
+            color: white;
+        }
+
+        .price-tag {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-bg);
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background-color: rgba(139, 195, 74, 0.1);
+            border-color: var(--button-green);
+            color: #3d5a16;
+        }
+
+        .alert-info {
+            background-color: rgba(3, 169, 244, 0.1);
+            border-color: var(--button-blue);
+            color: #01579b;
+        }
+
+        /* Payment method selection styles */
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .payment-method-option {
+            flex: 1;
+            min-width: 120px;
+            position: relative;
+        }
+
+        .payment-method-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .payment-method-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .payment-method-option input[type="radio"]:checked + label {
+            border-color: var(--button-blue);
+            background-color: rgba(3, 169, 244, 0.05);
+        }
+
+        .payment-method-option label i {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-option input[type="radio"]:focus + label {
+            box-shadow: 0 0 0 3px rgba(3, 169, 244, 0.2);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="pcoded-content">
+    <!-- Flash messages -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                <i class="fas {% if label == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i> {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-money-bill-wave"></i> Détails du Paiement</h2>
+            <a href="{{ path('app_reservation_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+        
+        <div class="reservation-section">
+            <h3 class="section-header"><i class="fas fa-ticket-alt"></i> Informations de la Réservation</h3>
+            <div class="info-row">
+                <div class="info-label">ID Réservation:</div>
+                <div class="info-value">#{{ reservation.idR }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Client:</div>
+                <div class="info-value">{{ reservation.NameUser }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Date:</div>
+                <div class="info-value">{{ reservation.dateR ? reservation.dateR|date('d/m/Y') : '' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Heure:</div>
+                <div class="info-value">{{ reservation.heureR ? reservation.heureR|date('H:i') : '' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Destination:</div>
+                <div class="info-value">{{ reservation.destinationR }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Nombre de places:</div>
+                <div class="info-value">{{ reservation.nbrplace }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Type de place:</div>
+                <div class="info-value">{{ reservation.typeplace }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Type de train:</div>
+                <div class="info-value">{{ reservation.typeTrainR }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">État réservation:</div>
+                <div class="info-value">
+                    {% if reservation.etatR == 'En attente' %}
+                        <span class="status-badge status-pending">En attente</span>
+                    {% elseif reservation.etatR == 'Confirmée' %}
+                        <span class="status-badge status-completed">Confirmée</span>
+                    {% elseif reservation.etatR == 'Annulée' %}
+                        <span class="status-badge status-canceled">Annulée</span>
+                    {% else %}
+                        <span class="status-badge">{{ reservation.etatR }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="payment-details">
+            <div class="payment-section">
+                <h3 class="section-header"><i class="fas fa-credit-card"></i> Détails du Paiement</h3>
+                
+                {% if payment is defined and payment %}
+                    <div class="info-row">
+                        <div class="info-label">Statut de paiement:</div>
+                        <div class="info-value">
+                            {% if payment.statutP == 'Effectué' %}
+                                <span class="status-badge status-completed">Effectué</span>
+                            {% elseif payment.statutP == 'En attente' %}
+                                <span class="status-badge status-pending">En attente</span>
+                            {% elseif payment.statutP == 'Annulé' %}
+                                <span class="status-badge status-canceled">Annulé</span>
+                            {% else %}
+                                <span class="status-badge status-pending">{{ payment.statutP }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Méthode de paiement:</div>
+                        <div class="info-value">{{ payment.methodeP }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Montant:</div>
+                        <div class="info-value price-tag">
+                            {% set price = 0 %}
+                            {% if reservation.typeplace == 'Première Classe' %}
+                                {% set price = reservation.nbrplace * 35 %}
+                            {% elseif reservation.typeplace == 'Premium' %}
+                                {% set price = reservation.nbrplace * 50 %}
+                            {% elseif reservation.typeplace == 'Économie' %}
+                                {% set price = reservation.nbrplace * 35 %}
+                            {% elseif reservation.typeplace == 'Handicap' %}
+                                {% set price = reservation.nbrplace * 20 %}
+                            {% else %}
+                                {% set price = reservation.nbrplace * 25 %}
+                            {% endif %}
+                            {{ price }} DT
+                        </div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Date de mise à jour:</div>
+                        <div class="info-value">{{ "now"|date('d/m/Y H:i') }}</div>
+                    </div>
+                {% else %}
+                    <div class="info-row">
+                        <div class="info-label">Statut de paiement:</div>
+                        <div class="info-value">
+                            <span class="status-badge status-pending">En attente</span>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Méthode de paiement:</div>
+                        <div class="info-value">Non définie</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Montant:</div>
+                        <div class="info-value price-tag">
+                            {% if reservation.typeplace == 'Première Classe' %}
+                                {% set price = reservation.nbrplace * 35 %}
+                            {% elseif reservation.typeplace == 'Premium' %}
+                                {% set price = reservation.nbrplace * 50 %}
+                            {% else %}
+                                {% set price = reservation.nbrplace * 20 %}
+                            {% endif %}
+                            {{ price }} DT
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-container">
+                <div class="form-title"><i class="fas fa-sync-alt"></i> Mettre à jour le paiement</div>
+                
+                <form method="post" action="{{ path('app_reservation_payment', {'id': reservation.idR}) }}">
+                    
+                    
+                    <div class="form-group">
+                        <label for="statutP">Statut du paiement</label>
+                        <select name="statutP" id="statutP" class="form-control">
+                            <option value="En attente" {% if payment is defined and payment and payment.statutP == 'En attente' %}selected{% endif %}>En attente</option>
+                            <option value="Effectué" {% if payment is defined and payment and payment.statutP == 'Effectué' %}selected{% endif %}>Effectué</option>
+                            <option value="Annulé" {% if payment is defined and payment and payment.statutP == 'Annulé' %}selected{% endif %}>Annulé</option>
+                        </select>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Mettre à jour le paiement
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

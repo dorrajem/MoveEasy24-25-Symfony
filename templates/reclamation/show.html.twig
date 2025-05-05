@@ -1,0 +1,455 @@
+{# templates/reclamation/show.html.twig #}
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Détails de la Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .riot-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .riot-banner {
+            background: linear-gradient(90deg, #0a323c 0%, #1e5770 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .bg-success-light {
+    background-color: rgba(46, 139, 87, 0.15);
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--primary-medium);
+}
+
+.timeline-item::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--primary-medium);
+}
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .status-new { background-color: #0bc4e2; color: #0a323c; }
+        .status-in-progress { background-color: #ffb74d; color: #502c00; }
+        .status-processed { background-color: #4caf50; color: #0a3c0f; }
+        .status-closed { background-color: #78909c; color: #263238; }
+        .status-waiting { background-color: #ce93d8; color: #4a148c; }
+        .riot-btn {
+            background-color: #d13639;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+        .riot-btn:hover {
+            background-color: #b13033;
+            color: white;
+        }
+        .btn-update {
+            background-color: #1e88e5;
+            color: white;
+        }
+        .btn-update:hover {
+            background-color: #1565c0;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #e53935;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #c62828;
+            color: white;
+        }
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: #e3f2fd;
+            color: #1e88e5;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 20px;
+        }
+        .timeline:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: #e0e0e0;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: -37px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1e88e5;
+            border: 2px solid #fff;
+        }
+        .timeline-date {
+            color: #757575;
+            font-size: 0.9rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Banner #}
+    <div class="riot-banner">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>Réclamation #{{ reclamation.id }}</h1>
+                    <p class="lead">{{ reclamation.dateSoumission|date('d/m/Y H:i') }}</p>
+                </div>
+                <span class="status-badge 
+                    {% if reclamation.statut == 'Nouvelle' %}status-new
+                    {% elseif reclamation.statut == 'En cours' %}status-in-progress
+                    {% elseif reclamation.statut == 'Traitée' %}status-processed
+                    {% elseif reclamation.statut == 'Clôturée' %}status-closed
+                    {% else %}status-waiting{% endif %}">
+                    {{ reclamation.statut }}
+                </span>
+            </div>
+        </div>
+    </div>
+    {% if reclamation.reponse is defined and reclamation.reponse is not empty %}
+        <div class="card rail-card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-reply me-2"></i>Réponse de l'administration</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex mb-3">
+                    <div class="flex-shrink-0">
+                        <div class="avatar bg-success-light rounded-circle p-2">
+                            <i class="fas fa-user-shield text-success"></i>
+                        </div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="fw-bold mb-1">Service Client MoveEasy</h6>
+                        <p class="text-muted small mb-2">
+                            <i class="far fa-clock me-1"></i>
+                            {% if reclamation.dateTraitement is defined and reclamation.dateTraitement is not empty %}
+                                {{ reclamation.dateTraitement|date('d/m/Y à H:i') }}
+                            {% else %}
+                                Date non disponible
+                            {% endif %}
+                        </p>
+                        <div class="mt-3 p-3 bg-light rounded">
+                            {{ reclamation.reponse|nl2br }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p><strong>Catégorie prédite :</strong> {{ reclamation.predictedCategory }}</p>
+<p><strong>Sentiment :</strong> {{ reclamation.sentiment }}</p>
+    {% elseif reclamation.statut == 'Traitée' or reclamation.statut == 'Clôturée' %}
+        <div class="alert alert-info mt-4" role="alert">
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="fas fa-info-circle fa-2x"></i>
+                </div>
+                <div>
+                    <h5 class="alert-heading">Réclamation traitée</h5>
+                    <p>Votre réclamation a été traitée, mais aucune réponse détaillée n'a été fournie.</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-4" role="alert">
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="fas fa-clock fa-2x"></i>
+                </div>
+                <div>
+                    <h5 class="alert-heading">En attente de traitement</h5>
+                    <p>Votre réclamation est en cours de traitement. Une réponse vous sera communiquée prochainement.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="container mb-5">
+        {# Flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="mb-4">
+            <a href="{{ path('app_reclamation_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+        
+        <div class="row">
+            {# Main details #}
+            <div class="col-lg-8">
+                <div class="card riot-card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Informations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="category-icon">
+                                {% if reclamation.categorie == 'Produit' %} 
+                                    <i class="fas fa-box"></i>
+                                {% elseif reclamation.categorie == 'Service' %}
+                                    <i class="fas fa-cogs"></i>
+                                {% elseif reclamation.categorie == 'Livraison' %}
+                                    <i class="fas fa-truck"></i>
+                                {% elseif reclamation.categorie == 'Support' %}
+                                    <i class="fas fa-headset"></i>
+                                {% else %}
+                                    <i class="fas fa-question-circle"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="mb-0">Réclamation #{{ reclamation.id }}</h4>
+                                <p class="text-muted mb-0">Catégorie: {{ reclamation.categorie }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>{{ reclamation.description }}</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-update">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            
+                            <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# Timeline of updates #}
+                <div class="card riot-card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Historique</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">{{ reclamation.dateSoumission|date('d/m/Y H:i') }}</div>
+                                <div class="timeline-content">
+                                    <h6>Création de la réclamation</h6>
+                                    <p>La réclamation a été créée avec le statut "{{ reclamation.statut }}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Sidebar details #}
+            <div class="col-lg-4">
+                {# Status Card #}
+                <div class="card riot-card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Statut</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column">
+                            <div class="mb-3">
+                                <strong>Statut actuel:</strong>
+                                <span class="status-badge ms-2
+                                    {% if reclamation.statut == 'Nouvelle' %}status-new
+                                    {% elseif reclamation.statut == 'En cours' %}status-in-progress
+                                    {% elseif reclamation.statut == 'Traitée' %}status-processed
+                                    {% elseif reclamation.statut == 'Clôturée' %}status-closed
+                                    {% else %}status-waiting{% endif %}">
+                                    {{ reclamation.statut }}
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Date de création:</strong>
+                                <span>{{ reclamation.dateSoumission|date('d/m/Y H:i') }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>ID Utilisateur:</strong>
+                                <span>{{ reclamation.idUtilisateur }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# Delete Confirmation Modal #}
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirmation de suppression</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0">Êtes-vous sûr de vouloir supprimer cette réclamation? Cette action est irréversible.</p>
+                        <div class="alert alert-warning mt-3">
+                            <strong>Détails de la réclamation:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>ID: #{{ reclamation.id }}</li>
+                                <li>Catégorie: {{ reclamation.categorie }}</li>
+                                <li>Date de soumission: {{ reclamation.dateSoumission|date('d/m/Y H:i') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                            <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // No additional JavaScript needed for confirmation as we're using the modal
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Itineraries{% endblock %}
+
+{% block body %}
+
+
+<section style="padding: 2rem; background-color: #f4f4f4;">
+  <h2 style="text-align: center; margin-bottom: 2rem;">{{ 'itineraries.title'|trans }}</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    {% for itineraire in itineraires %}
+      <div style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <h3 style="color: #2F7366;">{{ itineraire.nomItineraire }}</h3>
+        <p><strong>{{ 'itinerary.distance'|trans }}</strong> {{ itineraire.distance }} km</p>
+        <p><strong>{{ 'itinerary.departure'|trans }}</strong> {{ itineraire.heureDepartPrevue|date('H:i') }}</p>
+        <p><strong>{{ 'itinerary.arrival'|trans }}</strong> {{ itineraire.heureArriveePrevue|date('H:i') }}</p>
+        <p><strong>{{ 'itinerary.start_station'|trans }}</strong> {{ itineraire.startStation.nomStation }}</p>
+        <p><strong>{{ 'itinerary.end_station'|trans }}</strong> {{ itineraire.endStation.nomStation }}</p>
+        <p><strong>{{ 'itinerary.date'|trans }}</strong> {{ itineraire.dateiti|date('Y-m-d') }}</p>
+      </div>
+    {% else %}
+      <p>{{ 'itinerary.no_available'|trans }}</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

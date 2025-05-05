@@ -1,0 +1,61 @@
+{# templates/front/signup_front.html.twig #}
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Inscription – MoveEasy{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  {# Charge l’API reCAPTCHA v2 #}
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="max-width: 500px;">
+  <h1 class="mb-4">Créer votre compte</h1>
+
+  {# Flash messages #}
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endfor %}
+
+  {{ form_start(form, { render_rest: false }) }}
+
+    {{ form_row(form.nom,    { attr: { class: 'form-control', placeholder: 'Entrez votre nom' } }) }}
+    {{ form_row(form.prenom, { attr: { class: 'form-control', placeholder: 'Entrez votre prénom' } }) }}
+    {{ form_row(form.email,  { attr: { class: 'form-control', placeholder: 'Entrez votre email' } }) }}
+
+    {{ form_row(form.plainPassword, {
+      attr: {
+        class:        'form-control',
+        placeholder:  'Entrez le mot de passe',
+        autocomplete: 'new-password'
+      }
+    }) }}
+    {% for err in form.plainPassword.vars.errors %}
+      <div class="alert alert-danger mt-1">{{ err.message }}</div>
+    {% endfor %}
+
+    {# La checkbox reCAPTCHA v2 #}
+    {{ form_row(form.captcha) }}
+    {% for err in form.captcha.vars.errors %}
+      <div class="alert alert-danger mt-1">{{ err.message }}</div>
+    {% endfor %}
+
+    {# Rôle caché & CSRF #}
+    <input type="hidden" name="{{ form.role.vars.full_name }}" value="Employé" />
+    {{ form_widget(form._token) }}
+
+    <button type="submit" class="btn btn-primary w-100 mt-3">S'inscrire</button>
+
+  {{ form_end(form, { render_rest: false }) }}
+
+  <p class="text-center mt-3">
+    Vous avez déjà un compte ? <a href="{{ path('front_login') }}">Se connecter</a>
+  </p>
+</div>
+{% endblock %}

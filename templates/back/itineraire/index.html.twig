@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List of Itineraries{% endblock %}
+
+{% block body  %}
+<h1 class="h3 mb-4 text-gray-800">List of Itineraries</h1>
+
+<a href="{{ path('itineraire_new') }}" class="btn btn-success mb-3"><i class="fas fa-plus-circle"></i> Add</a>
+<!-- Search Form -->
+<form method="get" action="{{ path(app.request.attributes.get('_route')) }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" value="{{ app.request.get('search') }}" class="form-control" placeholder="Search itineraries...">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+<table class="table table-bordered table-hover">
+    <thead class="table-primary">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Distance</th>
+            <th>Departure</th>
+            <th>Arrival</th>
+            <th>Date</th>
+            <th>Start Station</th>
+            <th>End Station</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for itineraire in itineraires %}
+            <tr>
+                <td>{{ itineraire.id }}</td>
+                <td>{{ itineraire.nomItineraire }}</td>
+                <td>{{ itineraire.distance }} km</td>
+                <td>{{ itineraire.heureDepartPrevue|date('H:i') }}</td>
+                <td>{{ itineraire.heureArriveePrevue|date('H:i') }}</td>
+                <td>{{ itineraire.dateiti|date('d/m/Y') }}</td>
+                <td>{{ itineraire.startStation.nomStation }}</td>
+                <td>{{ itineraire.endStation.nomStation }}</td>
+                <td>
+                    <a href="{{ path('itineraire_show', {'id': itineraire.id}) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ path('itineraire_edit', {'id': itineraire.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ path('itineraire_delete', {'id': itineraire.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7" class="text-center"> No itineraries found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    
+{% endblock %}
+

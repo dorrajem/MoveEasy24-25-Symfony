@@ -1,0 +1,91 @@
+
+{% block body %}
+    <!-- ✅ Bandeau supérieur -->
+    <div class="rail-banner bg-success-lighter text-white py-4 mb-4">
+        <div class="container d-flex align-items-center gap-3">
+            <i class="fas fa-tools fa-2x"></i>
+            <div>
+                <h1 class="h4 fw-bold mb-0">Historique des maintenances</h1>
+                <small>Équipement : {{ equipement.typeEquipement }}</small><br>
+                <small>Train n° {{ equipement.idTrain ?? 'Non défini' }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Tableau des maintenances -->
+    <div class="container">
+        {% if maintenances is not empty %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle shadow-sm">
+                    <thead class="table-success text-center">
+                        <tr>
+                            <th>Date</th>
+                            <th>Période</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for maintenance in maintenances %}
+                            <tr>
+                                <td class="text-center">{{ maintenance.dateMaintenance|date('d/m/Y') }}</td>
+                                <td class="text-center">{{ maintenance.periode }}</td>
+                                <td>{{ maintenance.description }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                Aucune maintenance enregistrée pour cet équipement.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- ✅ Styles personnalisés -->
+    <style>
+        .rail-banner {
+            background: #66bb6a; /* Ton de vert plus doux */
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        table.table {
+            font-size: 1.1rem; /* Augmentation de la taille de police */
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px; /* Ajout d'un espacement sous le tableau */
+        }
+
+        table th {
+            background-color: #66bb6a; /* Couleur d'arrière-plan du tableau */
+            color: white;
+            font-weight: bold;
+            padding: 15px 10px; /* Espacement plus grand */
+        }
+
+        table td {
+            vertical-align: middle;
+            padding: 12px 10px; /* Plus d'espace autour des cellules */
+        }
+
+        .alert-info {
+            background-color: #e9f7f1;
+            color: #217c43;
+            font-weight: bold;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f8f5;
+        }
+
+        .shadow-sm {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+{% endblock %}
+

@@ -1,0 +1,1282 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}MoveEasy - Centre de Support{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --secondary-color: #0B5351;
+            --accent-color: #F3752B;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --info-color: #3B82F6;
+            --text-dark: #1F2937;
+            --text-medium: #4B5563;
+            --text-light: #F9FAFB;
+            --background-light: #F9FAFB;
+            --background-medium: #E5E7EB;
+            --background-dark: #111827;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Modern gradient banner with glass morphism effect */
+        .support-banner {
+            background: linear-gradient(135deg, rgba(11, 83, 81, 0.9) 0%, rgba(0, 168, 150, 0.85) 100%), 
+                        url('train.bg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+            backdrop-filter: blur(2px);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .support-banner::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, var(--background-light));
+        }
+
+        /* Modern card design */
+        .support-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--primary-medium);
+        }
+
+        .support-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Modern status badges with improved styling */
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .status-badge::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+        /* Style du bot guide */
+ /* Guide Bot Base Styles (keeping existing styles) */
+    .guide-bot-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        transition: all 0.5s ease;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+    
+    /* Enhanced tour overlay system */
+    .tour-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+    
+    .tour-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    /* Spotlight effect for highlighting elements */
+    .tour-spotlight {
+        position: absolute;
+        border-radius: 8px;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+        pointer-events: none;
+        z-index: 1000;
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    
+    /* Tour message box styles */
+    .tour-message {
+        position: absolute;
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        max-width: 350px;
+        border-left: 4px solid var(--primary-medium);
+        z-index: 1001;
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    
+    .tour-message:after {
+        content: "";
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: white;
+        transform: rotate(45deg);
+        z-index: -1;
+    }
+    
+    /* Different arrow positions */
+    .tour-message.arrow-top:after {
+        top: -7px;
+        left: 20px;
+    }
+    
+    .tour-message.arrow-bottom:after {
+        bottom: -7px;
+        left: 20px;
+    }
+    
+    .tour-message.arrow-left:after {
+        left: -7px;
+        top: 20px;
+    }
+    
+    .tour-message.arrow-right:after {
+        right: -7px;
+        top: 20px;
+    }
+    
+    /* Tour steps indicator */
+    .tour-steps {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 8px;
+    }
+    
+    .step-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--background-medium);
+        transition: all 0.3s ease;
+    }
+    
+    .step-indicator.active {
+        background: var(--primary-medium);
+        transform: scale(1.5);
+    }
+    
+    /* Progress animation for tour */
+    .tour-progress {
+        height: 4px;
+        background: var(--background-medium);
+        border-radius: 2px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+    
+    .tour-progress-bar {
+        height: 100%;
+        background: var(--primary-medium);
+        width: 0%;
+        transition: width 0.5s linear;
+    }
+    
+    /* Interactive elements within tour */
+    .tour-interactive {
+        padding: 10px 15px;
+        background: var(--background-light);
+        border: 1px solid var(--background-medium);
+        border-radius: 8px;
+        margin: 12px 0;
+    }
+    
+    /* Tour actions */
+    .tour-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+    
+    .tour-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+    
+    .tour-btn.primary {
+        background: var(--primary-medium);
+        color: white;
+    }
+    
+    .tour-btn.primary:hover {
+        background: var(--primary-color);
+    }
+    
+    .tour-btn.secondary {
+        background: transparent;
+        color: var(--text-medium);
+    }
+    
+    .tour-btn.secondary:hover {
+        background: var(--background-medium);
+    }
+    
+    /* Tour bot animation */
+    .guide-bot.tour-active {
+        animation: botExcited 0.5s infinite alternate ease-in-out;
+    }
+    
+    @keyframes botExcited {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        100% {
+            transform: translateY(-7px) rotate(5deg);
+        }
+    }
+    
+    /* Tour completion celebration */
+    .confetti-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1002;
+    }
+    
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 20px;
+        opacity: 0;
+    }
+    
+    /* Quick pulse animation for spotlighted elements */
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(0, 168, 150, 0.4), 0 0 0 9999px rgba(0, 0, 0, 0.75);
+        }
+        70% {
+            box-shadow: 0 0 0 15px rgba(0, 168, 150, 0), 0 0 0 9999px rgba(0, 0, 0, 0.75);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(0, 168, 150, 0), 0 0 0 9999px rgba(0, 0, 0, 0.75);
+        }
+    }
+    
+    .tour-spotlight.pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Badge notification for the bot */
+    .guide-bot-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 20px;
+        height: 20px;
+        background: var(--danger-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .guide-bot-badge.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+        /* Status colors with hover effects */
+        .status-new { 
+            background-color: rgba(59, 130, 246, 0.15); 
+            color: #2563eb; 
+        }
+        .status-new:hover {
+            background-color: rgba(59, 130, 246, 0.25);
+        }
+
+        .status-in-progress { 
+            background-color: rgba(245, 158, 11, 0.15); 
+            color: #d97706; 
+        }
+        .status-in-progress:hover {
+            background-color: rgba(245, 158, 11, 0.25);
+        }
+
+        .status-processed { 
+            background-color: rgba(16, 185, 129, 0.15); 
+            color: #059669; 
+        }
+        .status-processed:hover {
+            background-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .status-closed { 
+            background-color: rgba(107, 114, 128, 0.15); 
+            color: #4b5563; 
+        }
+        .status-closed:hover {
+            background-color: rgba(107, 114, 128, 0.25);
+        }
+
+        /* Optional: Add icon support */
+        .status-badge .icon {
+            font-size: 0.875rem;
+        }
+        /* Modern buttons */
+        .support-btn {
+            background-color: var(--primary-medium);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 168, 150, 0.2);
+        }
+
+        .support-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 168, 150, 0.3);
+            color: white;
+        }
+
+        /* Modern search input */
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border-radius: 8px;
+            border: 1px solid var(--background-medium);
+            transition: all 0.3s ease;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-medium);
+            box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-medium);
+        }
+
+        /* Modern empty state */
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border: 2px dashed var(--background-medium);
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            color: var(--primary-medium);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        /* Modern priority tags */
+        .priority-tag {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-high {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .priority-medium {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        /* Modern category chips */
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background-color: rgba(0, 168, 150, 0.1);
+            color: var(--primary-medium);
+            font-size: 0.8rem;
+            font-weight: 600;
+            gap: 6px;
+        }
+
+        /* Modern filter panel */
+        .filter-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .filter-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .filter-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--background-medium);
+        }
+
+        /* Modern switch for filters */
+        .filter-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .filter-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .filter-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--background-medium);
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .filter-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .filter-slider {
+            background-color: var(--primary-medium);
+        }
+
+        input:checked + .filter-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Modern dashboard cards */
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modern timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-item:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-medium);
+        }
+
+        .timeline-item:after {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 18px;
+            bottom: -18px;
+            width: 2px;
+            background-color: var(--background-medium);
+        }
+
+        .timeline-item:last-child:after {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .support-banner {
+                padding: 3rem 0;
+                border-radius: 0;
+            }
+            
+            .filter-panel {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reclamation-item {
+            animation: fadeIn 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .reclamation-item:nth-child(1) { animation-delay: 0.1s; }
+        .reclamation-item:nth-child(2) { animation-delay: 0.2s; }
+        .reclamation-item:nth-child(3) { animation-delay: 0.3s; }
+        .reclamation-item:nth-child(4) { animation-delay: 0.4s; }
+        .reclamation-item:nth-child(5) { animation-delay: 0.5s; }
+</style>
+{% endblock %}
+
+{% block body %}
+    {# Modern Banner with Glass Effect #}
+    <div class="support-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 mb-3 fw-bold">
+                        <i class="fas fa-headset me-2"></i>Centre de Support MoveEasy
+                    </h1>
+                    <p class="lead mb-4">Notre équipe est là pour vous aider à résoudre vos problèmes de voyage</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_reclamation_new') }}" class="support-btn">
+                            <i class="fas fa-plus-circle"></i> Nouvelle Réclamation
+                        </a>
+                        <a href="{{ path('app_home') }}" class="support-btn">
+                            <i class="fas fa-question-circle me-2"></i> Accueil
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 d-none d-lg-block">
+                    <div class="text-center">
+                        <div class="position-relative d-inline-block">
+                            <i class="fas fa-headset text-white opacity-10" style="font-size: 8rem;"></i>
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <div class="bg-white rounded-circle p-3 shadow" style="width: 80px; height: 80px;">
+                                    <i class="fas fa-comments text-primary-medium" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        {# Flash Messages - Modern Design #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas 
+                            {% if label == 'success' %}fa-check-circle
+                            {% elseif label == 'danger' %}fa-exclamation-triangle
+                            {% elseif label == 'warning' %}fa-exclamation-circle
+                            {% else %}fa-info-circle{% endif %} 
+                            me-2"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="row">
+            {# Modern Filter Panel #}
+            <div class="col-lg-3 mb-4">
+                <div class="filter-panel mb-4">
+                    <div class="filter-header">
+                        <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Filtres</h5>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h6 class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-list-alt me-2"></i>Catégorie
+                        </h6>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="all" id="cat-all" checked>
+                            <label class="form-check-label" for="cat-all">
+                                Toutes catégories
+                            </label>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check">
+                                <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="Retard" id="cat-delay">
+                                <label class="form-check-label d-flex align-items-center" for="cat-delay">
+                                    <i class="fas fa-clock me-2" style="color: var(--warning-color); width: 20px;"></i>
+                                    Retard
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="Annulation" id="cat-cancellation">
+                                <label class="form-check-label d-flex align-items-center" for="cat-cancellation">
+                                    <i class="fas fa-ban me-2" style="color: var(--danger-color); width: 20px;"></i>
+                                    Annulation
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="Confort" id="cat-comfort">
+                                <label class="form-check-label d-flex align-items-center" for="cat-comfort">
+                                    <i class="fas fa-couch me-2" style="color: var(--info-color); width: 20px;"></i>
+                                    Confort
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="Service" id="cat-service">
+                                <label class="form-check-label d-flex align-items-center" for="cat-service">
+                                    <i class="fas fa-concierge-bell me-2" style="color: var(--success-color); width: 20px;"></i>
+                                    Service
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input filter-category" type="radio" name="categoryFilter" value="Autre" id="cat-other">
+                                <label class="form-check-label d-flex align-items-center" for="cat-other">
+                                    <i class="fas fa-question-circle me-2" style="color: var(--text-medium); width: 20px;"></i>
+                                    Autre
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <button id="reset-filters" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-undo me-2"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+                
+                {# Modern Dashboard #}
+                <div class="filter-panel">
+                    <div class="filter-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Statistiques</h5>
+                    </div>
+                    <div class="filter-section">
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="metric-card text-center">
+                                    <div class="metric-value" id="total-reclamations">{{ reclamations|length }}</div>
+                                    <div class="text-muted small">Total</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-card text-center">
+                                    <div class="metric-value text-success" id="resolved-reclamations">{{ reclamations|filter(r => r.statut == 'Traitée' or r.statut == 'Clôturée')|length }}</div>
+                                    <div class="text-muted small">Résolues</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-chart-pie me-2"></i>Répartition
+                        </h6>
+                        <div class="mb-4">
+                            <canvas id="status-chart" height="180"></canvas>
+                        </div>
+
+                        <h6 class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-history me-2"></i>Activité récente
+                        </h6>
+                        <div class="activity-timeline">
+                            {% set latestReclamations = reclamations|slice(0, 3) %}
+                            {% for reclamation in latestReclamations %}
+                                <div class="timeline-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>#RC-{{ reclamation.id|slice(0, 8) }}</strong>
+                                            <div class="text-muted small">{{ reclamation.categorie }}</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted">{{ reclamation.dateSoumission|date('d/m H:i') }}</small>
+                                            <div>
+                                                <span class="status-badge 
+                                                    {% if reclamation.statut == 'Nouvelle' %}status-new
+                                                    {% elseif reclamation.statut == 'En cours' %}status-in-progress
+                                                    {% elseif reclamation.statut == 'Traitée' %}status-processed
+                                                    {% else %}status-closed{% endif %}">
+                                                    {{ reclamation.statut }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Taux de résolution</span>
+                                <span class="badge bg-primary rounded-pill" id="resolution-rate">
+                                    {% set resolvedCount = reclamations|filter(r => r.statut == 'Traitée' or r.statut == 'Clôturée')|length %}
+                                    {% set totalCount = reclamations|length %}
+                                    {% if totalCount > 0 %}
+                                        {{ (resolvedCount / totalCount * 100)|round }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </span>
+                            </h6>
+                            <div class="progress" style="height: 8px; border-radius: 4px;">
+                                <div class="progress-bar bg-primary" style="width: {% if totalCount > 0 %}{{ (resolvedCount / totalCount * 100)|round }}{% else %}0{% endif %}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Guide Bot Train -->
+
+
+<div id="guide-bot-container" class="guide-bot-container">
+    
+    <div class="guide-bot" id="guide-bot">
+        <div id="guide-bot-badge" class="guide-bot-badge">1</div>
+        <div class="guide-bot-smoke">
+            <div class="smoke-puff"></div>
+            <div class="smoke-puff"></div>
+            <div class="smoke-puff"></div>
+        </div>
+        <div class="guide-bot-head">
+            <div class="guide-bot-face">
+                <div class="guide-bot-eyes">
+                    <div class="guide-bot-eye"></div>
+                    <div class="guide-bot-eye"></div>
+                </div>
+                <div class="guide-bot-smile"></div>
+            </div>
+        </div>
+        <div class="guide-bot-body">
+            <div class="guide-bot-wheels">
+                <div class="guide-bot-wheel"></div>
+                <div class="guide-bot-wheel"></div>
+                <div class="guide-bot-wheel"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confetti-container" class="confetti-container"></div>
+         {# Main Content Area #}
+<div class="col-lg-9">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-ticket-alt me-2 text-primary-medium"></i>Mes Réclamations
+        </h2>
+        
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-box" class="form-control search-input" placeholder="Rechercher...">
+        </div>
+    </div>
+    
+    {% if reclamations|length > 0 %}
+    <div class="row g-4" id="reclamation-cards">
+        {% for reclamation in reclamations %}
+            <div class="col-md-6 col-xl-4 reclamation-item" 
+                data-status="{{ reclamation.statut }}" 
+                data-category="{{ reclamation.categorie }}"
+                data-priority="{{ reclamation.priorite ?? 'normal' }}"
+                data-date="{{ reclamation.dateSoumission|date('Y-m-d H:i:s') }}"
+                data-title="{{ reclamation.titre|default('') }}"
+                data-id="{{ reclamation.id }}">
+                <div class="card support-card h-100 position-relative">
+                    {% if (reclamation.priorite ?? 'normal') == 'high' %}
+                        <span class="priority-tag priority-high">
+                            <i class="fas fa-exclamation-circle me-1"></i>Urgent
+                        </span>
+                    {% elseif (reclamation.priorite ?? 'normal') == 'medium' %}
+                        <span class="priority-tag priority-medium">
+                            <i class="fas fa-exclamation me-1"></i>Important
+                        </span>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="ticket-id">#RC-{{ reclamation.id|slice(0, 8) }}</span>
+                            <span class="status-badge 
+                                {% if reclamation.statut == 'Nouvelle' %}status-new
+                                {% elseif reclamation.statut == 'En cours' %}status-in-progress
+                                {% elseif reclamation.statut == 'Traitée' %}status-processed
+                                {% elseif reclamation.statut == 'Clôturée' %}status-closed
+                                {% else %}status-waiting{% endif %}">
+                                {{ reclamation.statut }}
+                            </span>
+                        </div>
+                        
+                        {% if reclamation.titre is defined and reclamation.titre is not empty %}
+                            <h5 class="mb-2">{{ reclamation.titre }}</h5>
+                        {% else %}
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="user-avatar me-2">
+                                    {% if reclamation.user is defined and reclamation.user.avatar is defined and reclamation.user.avatar is not empty %}
+                                        <img src="{{ asset(reclamation.user.avatar) }}" alt="Avatar utilisateur" class="rounded-circle" width="30" height="30">
+                                    {% else %}
+                                        <div class="default-avatar rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                            <i class="fas fa-user text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <h5 class="mb-0">Réclamation de {{ reclamation.user.nom ?? 'Iyadh' }}</h5>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <span class="category-chip">
+                                {% if reclamation.categorie == 'Retard' %}
+                                    <i class="fas fa-clock"></i>
+                                {% elseif reclamation.categorie == 'Annulation' %}
+                                    <i class="fas fa-ban"></i>
+                                {% elseif reclamation.categorie == 'Confort' %}
+                                    <i class="fas fa-couch"></i>
+                                {% elseif reclamation.categorie == 'Service' %}
+                                    <i class="fas fa-concierge-bell"></i>
+                                {% else %}
+                                    <i class="fas fa-question-circle"></i>
+                                {% endif %}
+                                {{ reclamation.categorie }}
+                            </span>
+                        </div>
+                        
+                        <p class="text-muted small mb-3">{{ reclamation.description|slice(0, 100) ~ (reclamation.description|length > 100 ? '...' : '') }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="far fa-calendar me-1"></i> {{ reclamation.dateSoumission|date('d/m/Y') }}
+                            </small>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                
+                                {% if reclamation.reponse is defined and reclamation.reponse is not empty %}
+                                    <span class="badge bg-success d-flex align-items-center">
+                                        <i class="fas fa-comment-dots me-1"></i>
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-train"></i>
+        </div>
+        <h3 class="mb-3">Aucune réclamation trouvée</h3>
+        <p class="mb-4 text-muted">Vous n'avez soumis aucune réclamation pour le moment.</p>
+        <a href="{{ path('app_reclamation_new') }}" class="support-btn">
+            <i class="fas fa-plus-circle me-2"></i> Créer une réclamation
+        </a>
+    </div>
+    {% endif %}
+</div>
+</div>
+</div>
+    <!-- 📞 Footer - Version améliorée -->
+<footer class="footer-section" style="background-color: #1f6f68; color: white;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="footer-logo mb-3" data-aos="fade-right">
+                    <span class="h4" style="color: white;">MoveEasy</span>
+                </div>
+                <p data-aos="fade-right" data-aos-delay="100">Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.</p>
+                <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                    <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                    <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                    <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-4">
+                <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                    <li class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span>123 Avenue Habib Bourguiba, Tunis</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <span>+216 70 123 456</span>
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span>contact@moveeasy.tn</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span>Lun-Ven: 8h-18h</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <ul class="list-inline mb-0" data-aos="fade-left">
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                    <li class="list-inline-item mx-2">•</li>
+                    <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM selectors
+        const filterCategory = document.querySelectorAll('.filter-category');
+        const searchBox = document.getElementById('search-box');
+        const reclamationItems = document.querySelectorAll('.reclamation-item');
+        const resetButton = document.getElementById('reset-filters');
+        const reclamationCards = document.getElementById('reclamation-cards');
+        let statusChart;
+
+        // Chart init...
+        function initChart() {
+            const ctx = document.getElementById('status-chart');
+            if (!ctx) return;
+            const statusCounts = {'Nouvelle': 0, 'En cours': 0, 'Traitée': 0, 'Clôturée': 0};
+            reclamationItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                if (status in statusCounts) {
+                    statusCounts[status]++;
+                }
+            });
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Nouvelles', 'En cours', 'Traitées', 'Clôturées'],
+                    datasets: [{
+                        data: [
+                            statusCounts['Nouvelle'],
+                            statusCounts['En cours'],
+                            statusCounts['Traitée'],
+                            statusCounts['Clôturée']
+                        ],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(156, 163, 175, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(156, 163, 175, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? Math.round((context.raw / total) * 100) : 0;
+                                    return `${context.label}: ${context.raw} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    animation: { animateScale: true, animateRotate: true }
+                }
+            });
+        }
+
+        function updateDashboard() {
+            const visibleItems = Array.from(reclamationItems).filter(item => {
+                const style = window.getComputedStyle(item);
+                return style.display !== 'none';
+            });
+            const statusCounts = {'Nouvelle': 0, 'En cours': 0, 'Traitée': 0, 'Clôturée': 0};
+            visibleItems.forEach(item => {
+                const status = item.getAttribute('data-status');
+                if (status in statusCounts) statusCounts[status]++;
+            });
+            const totalCounter = document.getElementById('total-reclamations');
+            if (totalCounter) totalCounter.textContent = visibleItems.length;
+            const resolvedItems = visibleItems.filter(item => {
+                const status = item.getAttribute('data-status');
+                return status === 'Traitée' || status === 'Clôturée';
+            });
+            const resolvedCounter = document.getElementById('resolved-reclamations');
+            if (resolvedCounter) resolvedCounter.textContent = resolvedItems.length;
+            const resolutionRateElement = document.getElementById('resolution-rate');
+            const progressBar = document.querySelector('.progress-bar');
+            if (resolutionRateElement && progressBar && visibleItems.length > 0) {
+                const resolutionRate = Math.round((resolvedItems.length / visibleItems.length) * 100);
+                resolutionRateElement.textContent = resolutionRate + '%';
+                progressBar.style.width = resolutionRate + '%';
+            } else if (resolutionRateElement && progressBar) {
+                resolutionRateElement.textContent = '0%';
+                progressBar.style.width = '0%';
+            }
+            if (statusChart) {
+                statusChart.data.datasets[0].data = [
+                    statusCounts['Nouvelle'],
+                    statusCounts['En cours'],
+                    statusCounts['Traitée'],
+                    statusCounts['Clôturée']
+                ];
+                statusChart.update();
+            }
+        }
+
+        function filterItems() {
+            let selectedCategory = document.querySelector('.filter-category:checked')?.value || 'all';
+            let searchQuery = searchBox.value.toLowerCase().trim();
+            reclamationItems.forEach(item => {
+                const category = item.getAttribute('data-category');
+                const title = item.getAttribute('data-title').toLowerCase();
+                const description = item.querySelector('p')?.textContent.toLowerCase() || '';
+                const ticketId = item.querySelector('.ticket-id')?.textContent.toLowerCase() || '';
+                const categoryMatch = selectedCategory === 'all' || selectedCategory === category;
+                const searchMatch = searchQuery === '' || 
+                                    title.includes(searchQuery) || 
+                                    description.includes(searchQuery) || 
+                                    ticketId.includes(searchQuery);
+                item.style.display = (categoryMatch && searchMatch) ? '' : 'none';
+            });
+            updateDashboard();
+        }
+
+        initChart();
+        filterCategory.forEach(input => {
+            input.addEventListener('change', filterItems);
+        });
+        searchBox.addEventListener('input', filterItems);
+        resetButton.addEventListener('click', function() {
+            document.getElementById('cat-all').checked = true;
+            searchBox.value = '';
+            filterItems();
+        });
+        filterItems();
+    });
+
+    // ------------------------- Guide Bot -------------------------
+    document.addEventListener('DOMContentLoaded', function() {
+        const guideBot = document.getElementById('guide-bot-container');
+        const guideBotMessage = document.getElementById('guide-bot-message');
+        const bot = document.getElementById('guide-bot');
+        const botBadge = document.getElementById('guide-bot-badge');
+
+        let tutorialStopped = localStorage.getItem('tutorialStopped') === 'true';
+
+        if (!tutorialStopped) {
+            setTimeout(() => {
+                guideBot.style.display = 'flex';
+                // Add the X button dynamically
+                if (!document.getElementById('close-guide-bot')) {
+                    const closeBtn = document.createElement('button');
+                    closeBtn.id = 'close-guide-bot';
+                    closeBtn.textContent = '×';  // X symbol
+                    closeBtn.style.position = 'absolute';
+                    closeBtn.style.top = '5px';
+                    closeBtn.style.right = '10px';
+                    closeBtn.style.fontSize = '20px';
+                    closeBtn.style.background = 'transparent';
+                    closeBtn.style.border = 'none';
+                    closeBtn.style.cursor = 'pointer';
+                    closeBtn.style.color = '#999';
+                    closeBtn.title = 'Fermer le guide';
+                    guideBot.appendChild(closeBtn);
+
+                    closeBtn.addEventListener('click', function() {
+                        guideBot.style.display = 'none';
+                        localStorage.setItem('tutorialStopped', 'true');
+                        tutorialStopped = true;
+                    });
+                }
+
+                setTimeout(() => {
+                    guideBotMessage.classList.add('active');
+                    setTimeout(() => {
+                        botBadge.classList.add('active');
+                    }, 1000);
+                }, 500);
+            }, 1500);
+        }
+
+        // Add helpful tips if NOT disabled
+        if (!tutorialStopped) {
+            let tipIndex = 0;
+            const helpfulTips = [
+                "Saviez-vous que vous pouvez filtrer vos réclamations par catégorie?",
+                "Cliquez sur l'icône d'œil pour voir les détails d'une réclamation",
+                "Utilisez la barre de recherche pour trouver rapidement une réclamation",
+                "Les badges colorés indiquent le statut de chaque réclamation"
+            ];
+            const tipInterval = setInterval(() => {
+                if (tutorialStopped) {
+                    clearInterval(tipInterval);
+                    return;
+                }
+                if (!guideBotMessage.classList.contains('active')) {
+                    botBadge.classList.add('active');
+                    guideBotMessage.innerHTML = `
+                        <h5 class="mb-2">Astuce! 💡</h5>
+                        <p>${helpfulTips[tipIndex]}</p>
+                        <div class="guide-bot-actions">
+                            <button id="start-tour-tip" class="guide-bot-button">Démarrer la visite</button>
+                        </div>
+                    `;
+                    tipIndex = (tipIndex + 1) % helpfulTips.length;
+                    document.getElementById('start-tour-tip').addEventListener('click', function() {
+                        // Add your start tour logic here if needed
+                    });
+                }
+            }, 60000); // every 60 seconds
+        }
+    });
+    </script>
+{% endblock %}

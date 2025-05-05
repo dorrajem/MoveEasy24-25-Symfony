@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --green-dark: #0B8457;
+            --green-medium: #3BB273;
+            --green-light: #A8E6CF;
+        }
+
+        .card-stat {
+            padding: 1rem;
+            border-left: 5px solid var(--green-dark);
+            border-radius: .5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-stat h3 {
+            margin-bottom: 0;
+            font-size: 2rem;
+        }
+
+        .card-stat p {
+            margin-bottom: 0;
+            color: #f0f0f0;
+        }
+
+        .bg-green-service {
+            background-color: var(--green-dark);
+            color: white;
+        }
+
+        .bg-green-maintenance {
+            background-color: var(--green-medium);
+            color: white;
+        }
+
+        .bg-green-out {
+            background-color: var(--green-light);
+            color: #0B5351;
+        }
+
+        .pie-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+{% block page_title %}
+🚆 Tableau de Bord - Trains
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card-stat bg-green-service">
+                    <h3>{{ enService }}</h3>
+                    <p>Trains En Service</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-stat bg-green-maintenance">
+                    <h3>{{ enMaintenance }}</h3>
+                    <p>Trains en Maintenance</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-stat bg-green-out">
+                    <h3>{{ horsService }}</h3>
+                    <p>Trains Hors Service</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="{{ path('app_train_dashboard_pdf') }}" class="btn btn-outline-dark mb-3" target="_blank">
+            <i class="fas fa-file-pdf me-1"></i> Exporter PDF
+        </a>
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-green-service text-white">
+                        <strong><i class="fas fa-chart-pie me-2"></i>Répartition par Statut</strong>
+                    </div>
+                    <div class="card-body pie-container">
+                        <canvas id="trainPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3"><i class="fas fa-clock"></i> Derniers Trains Ajoutés</h4>
+        <ul class="list-group">
+            {% for train in latestTrains %}
+                <li class="list-group-item">
+                    🚄 {{ train.TypeTrain ?? 'Nom inconnu' }} — Statut: <strong>{{ train.statut }}</strong>
+                </li>
+            {% else %}
+                <li class="list-group-item text-muted">Aucun train trouvé.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('trainPieChart').getContext('2d');
+
+            const greenDark = getComputedStyle(document.documentElement).getPropertyValue('--green-dark').trim();
+            const greenMedium = getComputedStyle(document.documentElement).getPropertyValue('--green-medium').trim();
+            const greenLight = getComputedStyle(document.documentElement).getPropertyValue('--green-light').trim();
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['En Service', 'En Maintenance', 'Hors Service'],
+                    datasets: [{
+                        data: [{{ enService }}, {{ enMaintenance }}, {{ horsService }}],
+                        backgroundColor: [greenDark, greenMedium, greenLight],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' trains';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

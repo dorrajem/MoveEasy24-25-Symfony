@@ -1,0 +1,76 @@
+{# partials/_footer.html.twig #}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="footer-logo mb-3" data-aos="fade-right">
+                <img src="{{ asset('images/MoveEasy.png') }}" width="50" alt="MoveEasy Logo" class="me-2">
+                <span class="h4" style="color: white;">MoveEasy</span>
+            </div>
+            <p data-aos="fade-right" data-aos-delay="100">
+                Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.
+            </p>
+            <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+            <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+            <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                <li class="mb-2"><a href="{{ path('app_reclamation_index') }}" class="text-white text-decoration-none">Réclamations</a></li>
+                <li class="mb-2"><a href="{{ path('app_avis_index') }}" class="text-white text-decoration-none">Avis</a></li>
+                <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+            <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+            <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+            </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-4">
+            <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+            <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                <li class="mb-3">
+                    <i class="fas fa-map-marker-alt me-2"></i>123 Avenue Habib Bourguiba, Tunis
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-phone-alt me-2"></i>+216 70 123 456
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-envelope me-2"></i>contact@moveeasy.tn
+                </li>
+                <li>
+                    <i class="fas fa-clock me-2"></i>Lun-Ven: 8h-18h
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+            <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+            <ul class="list-inline mb-0" data-aos="fade-left">
+                <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                <li class="list-inline-item mx-2">•</li>
+                <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

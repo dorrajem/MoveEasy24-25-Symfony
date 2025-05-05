@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MoveEasy - Transport accessible{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS (pour la carte) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <!-- AOS CSS (pour les animations) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e9f8f7;
+            padding-top: 70px; /* Espace pour la navbar fixe */
+        }
+        .navbar {
+            background-color: rgba(31, 111, 104, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar.scrolled {
+            padding: 5px 0;
+            background-color: rgba(31, 111, 104, 0.98);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-brand {
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover {
+            transform: scale(1.05);
+            color: #e9f8f7;
+        }
+        .navbar-brand img {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+        .navbar-brand:hover img {
+            transform: rotate(10deg);
+        }
+        .nav-link {
+            color: white;
+            font-weight: 500;
+            margin: 0 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: #1f6f68;
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            color: #1f6f68;
+            background-color: white;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        .navbar-toggler {
+            border: none;
+            background-color: transparent;
+            color: white;
+            padding: 0;
+        }
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        .navbar-toggler-icon {
+            background-image: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .section-title {
+            color: #1f6f68;
+        }
+        footer {
+            background-color: #1f6f68;
+            color: white;
+            padding: 20px 0;
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+<!-- 🔝 Navbar Améliorée -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('front_home') }}" data-aos="fade-right" data-aos-duration="1000">
+            <img src="{{ asset('imgs/MoveEasy.png') }}" width="40" alt="MoveEasy Logo">
+            MoveEasy
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
+            <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="100">
+                    <a class="nav-link" href="{{ path('app_home_global') }}">
+                        <i class="fas fa-home me-1"></i>Accueil
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="200">
+                    <a class="nav-link" href="{{ path('app_front_reservation_index') }}">
+                        <i class="fas fa-ticket-alt me-1"></i>Réservation
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="300">
+                    <a class="nav-link" href="{{ path('app_reclamation_index') }}">
+                        <i class="fas fa-comment-alt me-1"></i>Réclamations
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="400">
+                    <a class="nav-link" href="{{ path('app_avis_index') }}">
+                        <i class="fas fa-comment-alt me-1"></i>Avis
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="500">
+                    <a class="nav-link" href="{{ path('app_client_maps') }}">
+                        <i class="fas fa-map-marker-alt me-1"></i>Maps
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="600">
+                    <a class="nav-link" href="{{ path('front_train_list') }}">
+                        <i class="fas fa-train me-1"></i>Trains
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="700">
+                    <a class="nav-link" href="{{ path('app_client_itineraires') }}">
+                        <i class="fas fa-route me-1"></i>Itinéraires
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="800">
+                    <a class="nav-link" href="{{ path('front_equipements') }}">
+                        <i class="fas fa-hard-hat me-1"></i> Equipements
+                    </a>
+                </li>
+
+                {% if app.user %}
+                <li class="nav-item d-flex align-items-center">
+                    <a class="nav-link d-flex align-items-center" href="{{ path('front_profile') }}">
+                        {% if app.user.profil is not null and app.user.profil.photoProfil is not empty %}
+                            <img src="{{ absolute_url(asset('uploads/profiles/' ~ app.user.profil.photoProfil)) }}"
+                                 alt="Avatar de {{ app.user.prenom }}"
+                                 class="rounded-circle me-2"
+                                 style="width:35px; height:35px; object-fit:cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-lg text-light me-2"></i>
+                        {% endif %}
+                        <span class="text-light">{{ app.user.prenom }}</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="900">
+                    <a class="nav-link" href="{{ path('front_logout') }}">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="900">
+                    <a class="nav-link" href="{{ path('front_login') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item" data-aos="fade-down" data-aos-delay="1000">
+                    <a class="nav-link" href="{{ path('front_signup') }}">
+                        <i class="fas fa-user-plus me-1"></i>Signup
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- 🗣️ TTS Dropdown -->
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="ttsDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        🗣️
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 250px;" aria-labelledby="ttsDropdown">
+                        <button id="stopButton" class="btn btn-sm btn-danger w-100 mb-2">Stop</button>
+
+                        <label for="speedControl" class="form-label mb-0">Vitesse</label>
+                        <input type="range" id="speedControl" class="form-range" min="0.5" max="2" step="0.1" value="1">
+
+                        <label for="voiceSelect" class="form-label mb-0 mt-2">Voix</label>
+                        <select id="voiceSelect" class="form-select form-select-sm mb-2"></select>
+
+                        <label for="volumeControl" class="form-label mb-0 mt-2">Volume</label>
+                        <input type="range" id="volumeControl" class="form-range" min="0" max="1" step="0.1" value="1">
+                    </div>
+                </li>
+
+                <!-- 🌐 Language Dropdown -->
+                <li class="nav-item dropdown ms-3" data-aos="fade-down" data-aos-delay="1100">
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        🌐
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'_locale': 'fr'})) }}">
+                                Français
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path(app.request.attributes.get('_route'), app.request.query.all | merge({'_locale': 'en'})) }}">
+                                English
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% block body %}{% endblock %}
+
+{# ✅ Footer unchanged #}
+ <footer class="footer-section" style="background-color: #1f6f68; color: white;">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-logo mb-3" data-aos="fade-right">
+                        <img src="{{ asset('imgs/MoveEasy.png') }}" width="50" alt="MoveEasy Logo" class="me-2">
+                        <span class="h4" style="color: white;">MoveEasy</span>
+                    </div>
+                    <p data-aos="fade-right" data-aos-delay="100">
+                        Déplacez-vous facilement et en toute sérénité avec notre service de transport accessible à tous.
+                    </p>
+                    <div class="social-icons mt-4" data-aos="fade-right" data-aos-delay="200">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Liens rapides</h5>
+                    <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accueil</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Réservation</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Services</h5>
+                    <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Accessibilité</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Horaires</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Tarifs</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Stations</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5 class="mb-4" data-aos="fade-up" data-aos-delay="100">Contactez-nous</h5>
+                    <ul class="list-unstyled" data-aos="fade-up" data-aos-delay="150">
+                        <li class="mb-3"><i class="fas fa-map-marker-alt me-2"></i><span>123 Avenue Habib Bourguiba, Tunis</span></li>
+                        <li class="mb-3"><i class="fas fa-phone-alt me-2"></i><span>+216 70 123 456</span></li>
+                        <li class="mb-3"><i class="fas fa-envelope me-2"></i><span>contact@moveeasy.tn</span></li>
+                        <li><i class="fas fa-clock me-2"></i><span>Lun-Ven: 8h-18h</span></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0" data-aos="fade-right">&copy; {{ "now"|date("Y") }} MoveEasy. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <ul class="list-inline mb-0" data-aos="fade-left">
+                        <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Politique de confidentialité</a></li>
+                        <li class="list-inline-item mx-2">•</li>
+                        <li class="list-inline-item"><a href="#" class="text-white text-decoration-none">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init({ once: true, duration: 800 });
+    document.addEventListener('DOMContentLoaded', () => {
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.pageYOffset > 50);
+        });
+    });
+
+    // ✅ Text to Speech JS
+    document.addEventListener('DOMContentLoaded', function() {
+        const speakButton = document.getElementById('ttsDropdown');
+        const stopButton = document.getElementById('stopButton');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const speedControl = document.getElementById('speedControl');
+        const volumeControl = document.getElementById('volumeControl');
+        const synth = window.speechSynthesis;
+        let utterance;
+
+        function loadVoices() {
+            const voices = synth.getVoices();
+            voiceSelect.innerHTML = '';
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+        setTimeout(loadVoices, 500);
+
+        speakButton.addEventListener('click', function() {
+            if (synth.speaking) return;
+            let textToRead = '';
+            document.querySelectorAll('h1, h2, h3, p, a, li, button').forEach(element => {
+                if (element.innerText.trim() !== '') {
+                    textToRead += element.innerText.trim() + '. ';
+                }
+            });
+
+            if (textToRead !== '') {
+                utterance = new SpeechSynthesisUtterance(textToRead);
+                const selectedVoice = synth.getVoices()[voiceSelect.value] || synth.getVoices()[0];
+                utterance.voice = selectedVoice;
+                utterance.lang = selectedVoice.lang || 'fr-FR';
+                utterance.rate = parseFloat(speedControl.value);
+                utterance.volume = parseFloat(volumeControl.value);
+                synth.cancel();
+                synth.speak(utterance);
+            }
+        });
+
+        stopButton.addEventListener('click', function() {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+        });
+
+        speedControl.addEventListener('input', function() {
+            if (utterance && synth.speaking) {
+                synth.cancel();
+                utterance.rate = parseFloat(speedControl.value);
+                synth.speak(utterance);
+            }
+        });
+
+        volumeControl.addEventListener('input', function() {
+            if (utterance && synth.speaking) {
+                synth.cancel();
+                utterance.volume = parseFloat(volumeControl.value);
+                synth.speak(utterance);
+            }
+        });
+
+        voiceSelect.addEventListener('change', function() {
+            if (utterance && synth.speaking) {
+                synth.cancel();
+                utterance.voice = synth.getVoices()[voiceSelect.value];
+                synth.speak(utterance);
+            }
+        });
+    });
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

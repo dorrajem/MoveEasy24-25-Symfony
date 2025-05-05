@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <style>
+        :root {
+            --primary-color: #0B5351;
+            --primary-medium: #00A896;
+            --primary-light: #99D5CF;
+            --secondary-color: #0B5351;
+            --accent-color: #F3752B;
+            --success-color: #2E8B57;
+            --warning-color: #FFC857;
+            --danger-color: #E63946;
+        }
+
+        .rail-banner {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--primary-light);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #276749;
+        }
+    </style>
+
+    <div class="rail-banner">
+        <div class="container">
+            <h1 class="display-5 fw-bold">Modifier l'Équipement</h1>
+            <p class="lead">Mettez à jour les détails de votre équipement</p>
+        </div>
+    </div>
+
+    <div class="container mt-5 mb-5">
+        <div class="form-container">
+            {{ form_start(form) }}
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.typeEquipement, 'Type d\'équipement') }}
+                    {{ form_widget(form.typeEquipement, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.typeEquipement) }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.idTrain, 'Train associé') }}
+                    {{ form_widget(form.idTrain, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.idTrain) }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.quantiteDisponible, 'Quantité disponible') }}
+                    {{ form_widget(form.quantiteDisponible, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.quantiteDisponible) }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.statut, 'Statut') }}
+                    {{ form_widget(form.statut, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.statut) }}
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-success px-4">Modifier</button>
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+

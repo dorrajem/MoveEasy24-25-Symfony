@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Répondre à la réclamation{% endblock %}
+
+{% block body %}
+    <h1>Répondre à la réclamation #{{ reclamation.id }}</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Catégorie:</strong> {{ reclamation.categorie }}
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong></p>
+            <p>{{ reclamation.description }}</p>
+            
+            <p><strong>Date de soumission:</strong> {{ reclamation.dateSoumission|date('d/m/Y H:i') }}</p>
+            <p><strong>ID Utilisateur:</strong> {{ reclamation.idUtilisateur }}</p>
+            
+            <hr>
+            
+            <form method="post">
+                <div class="mb-3">
+                    <label for="reponse" class="form-label">Votre réponse</label>
+                    <textarea class="form-control" id="reponse" name="reponse" rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Envoyer la réponse</button>
+                <a href="{{ path('admin_reclamation_index') }}" class="btn btn-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+{% endblock %}

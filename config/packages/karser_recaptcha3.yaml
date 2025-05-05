@@ -1,0 +1,9 @@
+# config/packages/karser_recaptcha3.yaml
+karser_recaptcha3:
+    site_key: '%env(RECAPTCHA3_KEY)%'
+    secret_key: '%env(RECAPTCHA3_SECRET)%'
+    score_threshold: 0.5
+    host: 'recaptcha.net'  # Utilisez 'www.google.com' si vous n'êtes pas dans l'UE
+    enabled: true
+    # Vous pouvez ajouter cette option pour la journalisation
+    # ip_anonymization: true

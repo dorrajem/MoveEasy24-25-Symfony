@@ -1,0 +1,14 @@
+twig:
+    file_name_pattern: '*.twig'
+    globals:
+        pusher_key: '%env(string:PUSHER_APP_KEY)%'
+        pusher_cluster: '%env(string:PUSHER_APP_CLUSTER)%'
+    paths: ['%kernel.project_dir%/templates']
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    form_themes:
+        - 'bootstrap_5_layout.html.twig'
+        - '@KarserRecaptcha3/Form/karser_recaptcha3_widget.html.twig'
+when@test:
+    twig:
+        strict_variables: true

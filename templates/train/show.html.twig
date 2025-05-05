@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Train{% endblock %}
+
+{% block body %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="card card-info">
+      <div class="card-header">
+        <h3 class="card-title">Détails du train</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item"><strong>Type :</strong> {{ train.TypeTrain }}</li>
+          <li class="list-group-item"><strong>Capacité :</strong> {{ train.capacite }}</li>
+          <li class="list-group-item"><strong>Statut :</strong> {{ train.statut }}</li>
+          <li class="list-group-item"><strong>Date de mise en service :</strong> {{ train.dateMiseEnService ? train.dateMiseEnService|date('d/m/Y') : 'Non définie' }}</li>
+        </ul>
+      </div>
+    </div>
+    <a href="{{ path('app_train_index') }}" class="btn btn-secondary mt-2">Retour à la liste</a>
+    <a href="{{ path('app_train_edit', { idTrain: train.idTrain }) }}" class="btn btn-warning mt-2">Modifier</a>
+    <form method="post" action="{{ path('app_train_delete', { idTrain: train.idTrain }) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce train ?');">
+      <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ train.idTrain) }}">
+      <button class="btn btn-danger mt-2">Supprimer</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

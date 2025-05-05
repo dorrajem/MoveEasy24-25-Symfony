@@ -1,0 +1,420 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord Administrateur{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %} {# Assuming this block exists in base.html.twig #}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# Assurez-vous que Font Awesome est chargé #}
+    <style>
+        /* Define root variables (ideally done globally) */
+        :root {
+            --primary-color: {{ '#0B5351' }};     /* Dark teal */
+            --primary-medium: {{ '#00A896' }};   /* Medium teal */
+            --primary-light: {{ '#99D5CF' }};    /* Light teal */
+            --secondary-color: {{ '#0B5351' }};  /* Using primary dark as secondary */
+            --accent-color: {{ '#F3752B' }};      /* Complementary orange */
+            --success-color: {{ '#2E8B57' }};    /* SeaGreen */
+            --warning-color: {{ '#FFC857' }};    /* Amber */
+            --danger-color: {{ '#E63946' }};     /* Red */
+            --text-dark: {{ '#2A2D34' }};        /* Dark grey for text */
+            --text-light: {{ '#F8F9FA' }};       /* Light color for text */
+            --background-light: {{ '#F8F9FA' }}; /* Light background */
+            --background-medium: {{ '#E9ECEF' }}; /* Medium light background */
+
+            /* Chart specific colors derived from palette */
+            --chart-color-1: var(--danger-color);   /* 1 star */
+            --chart-color-2: var(--accent-color);   /* 2 stars */
+            --chart-color-3: var(--warning-color);  /* 3 stars */
+            --chart-color-4: var(--primary-medium); /* 4 stars */
+            --chart-color-5: var(--success-color);  /* 5 stars */
+        }
+
+        /* Custom Button Styles */
+        .btn-primary-custom { background-color: var(--primary-color); border-color: var(--primary-color); color: var(--text-light); }
+        .btn-primary-custom:hover { background-color: darken(var(--primary-color), 10%); border-color: darken(var(--primary-color), 10%); color: var(--text-light); }
+        .btn-secondary-custom { background-color: var(--primary-medium); border-color: var(--primary-medium); color: var(--text-light); }
+        .btn-secondary-custom:hover { background-color: darken(var(--primary-medium), 10%); border-color: darken(var(--primary-medium), 10%); color: var(--text-light); }
+        .btn-outline-primary-custom { color: var(--primary-color); border-color: var(--primary-color); }
+        .btn-outline-primary-custom:hover { background-color: var(--primary-color); color: var(--text-light); }
+        .btn-info-custom { background-color: var(--primary-light); border-color: var(--primary-light); color: var(--text-dark); } /* Example for info */
+        .btn-info-custom:hover { background-color: darken(var(--primary-light), 10%); border-color: darken(var(--primary-light), 10%); color: var(--text-dark); }
+
+        /* Custom Status Badges */
+        .badge-status-warning { background-color: var(--warning-color); color: var(--text-dark); }
+        .badge-status-success { background-color: var(--success-color); color: var(--text-light); }
+        .badge-status-default { background-color: var(--background-medium); color: var(--text-dark); } /* Example */
+
+        /* Enhanced Stats Card */
+        .stats-card-custom {
+            border: 1px solid var(--background-medium);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-radius: 0.375rem; /* Default Bootstrap card radius */
+        }
+        .stats-card-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        .stats-card-custom .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .stats-card-custom .stats-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+        .stats-card-custom .stats-content p {
+            font-size: 0.9rem;
+            color: #6c757d; /* Bootstrap text-muted */
+            margin-bottom: 0;
+        }
+        .stats-card-custom .stats-icon i {
+            font-size: 2.5rem;
+            opacity: 0.6;
+        }
+        /* Color variants using borders */
+        .stats-card-custom.border-left-primary { border-left: 5px solid var(--primary-color); }
+        .stats-card-custom.border-left-warning { border-left: 5px solid var(--warning-color); }
+        .stats-card-custom.border-left-success { border-left: 5px solid var(--success-color); }
+        .stats-card-custom.border-left-danger { border-left: 5px solid var(--danger-color); }
+        .stats-card-custom.border-left-accent { border-left: 5px solid var(--accent-color); }
+
+        /* Custom Card Headers */
+        .card-header-custom {
+             background-color: var(--primary-light);
+             border-bottom: 2px solid var(--primary-medium);
+             color: var(--primary-color); /* Darker text on light header */
+             font-weight: 600;
+        }
+        .card-header-custom .btn { /* Style button within custom header */
+             color: var(--primary-color) !important;
+             border-color: var(--primary-color) !important;
+        }
+         .card-header-custom .btn:hover {
+             background-color: var(--primary-color) !important;
+             color: var(--text-light) !important;
+         }
+
+
+        /* Table Header */
+         .table > thead { /* Ensure specificity */
+             background-color: var(--background-medium);
+             color: var(--text-dark);
+             font-weight: 600;
+             border-bottom: 2px solid var(--background-medium);
+         }
+         .table th {
+             font-weight: 600;
+         }
+
+        /* Review List Item */
+        .review-item .review-stars { color: var(--warning-color); }
+        .review-item .review-user-icon {
+            background-color: var(--background-medium);
+            color: var(--primary-medium);
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px; /* Increased height */
+            width: 100%;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4 py-4">
+
+    {# === Top Row: Stats Cards === #}
+    <div class="row">
+        {# Total Reclamations #}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stats-card-custom border-left-primary shadow-sm h-100">
+                <div class="card-body">
+                    <div class="stats-content">
+                        <h2>{{ reclamationsTotal ?? 0 }}</h2>
+                        <p>Réclamations totales</p>
+                    </div>
+                    <div class="stats-icon text-primary">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+                {# <div class="card-footer bg-transparent border-top-0 pt-0 text-muted small">
+                    Placeholder: +2% vs semaine dernière
+                </div> #}
+            </div>
+        </div>
+
+        {# Pending Reclamations #}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stats-card-custom border-left-warning shadow-sm h-100">
+                 <div class="card-body">
+                    <div class="stats-content">
+                         <h2>{{ reclamationsEnAttente ?? 0 }}</h2>
+                         <p>Réclamations en attente</p>
+                    </div>
+                    <div class="stats-icon text-warning">
+                         <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        {# Treated Reclamations #}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stats-card-custom border-left-success shadow-sm h-100">
+                <div class="card-body">
+                    <div class="stats-content">
+                        <h2>{{ reclamationsTraitees ?? 0 }}</h2>
+                        <p>Réclamations traitées</p>
+                    </div>
+                    <div class="stats-icon text-success">
+                         <i class="fas fa-check-circle"></i>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        {# Average Review Score #}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card stats-card-custom border-left-accent shadow-sm h-100">
+                <div class="card-body">
+                    <div class="stats-content">
+                         {# Added check for null/zero reviews #}
+                         <h2>{{ (noteMoyenne ?? 0)|number_format(1) }} <small style="font-size: 0.9rem;">/ 5</small></h2>
+                         <p>Note moyenne des avis</p>
+                    </div>
+                    <div class="stats-icon" style="color: var(--accent-color);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    {# === Second Row: Recent Activity & Charts === #}
+    <div class="row">
+
+        {# Left Column: Recent Reclamations #}
+        <div class="col-xl-7 col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header card-header-custom py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0"><i class="fas fa-list-alt me-2"></i>Réclamations Récentes</h6>
+                    {# Use custom button style #}
+                    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-sm btn-outline-primary-custom">Voir Tout</a>
+                </div>
+                <div class="card-body p-0"> {# Remove padding for flush table #}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Catégorie</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Statut</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reclamation in reclamationsRecentes %}
+                                    {% set status_class = reclamation.statut == 'en attente' ? 'warning' : 'success' %}
+                                    <tr>
+                                        <td>{{ reclamation.id }}</td>
+                                        <td>{{ reclamation.categorie }}</td>
+                                        <td>
+                                            {# Tooltip for exact time #}
+                                            <span title="{{ reclamation.dateSoumission|date('d/m/Y H:i:s') }}">{{ reclamation.dateSoumission|date('d M Y') }}</span>
+                                            {# Consider KnpTimeBundle for 'ago' format #}
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge rounded-pill badge-status-{{ status_class }} px-2 py-1">
+                                                {{ reclamation.statut|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            {# Use custom themed button #}
+                                            <a href="{{ path('admin_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-sm btn-info-custom" title="Voir Détails">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                             {# Add other quick actions if needed (e.g., Mark as Done with AJAX) #}
+                                             {# <button class="btn btn-sm btn-outline-success" title="Marquer comme traitée"><i class="fas fa-check"></i></button> #}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="fas fa-info-circle me-2"></i>Aucune réclamation récente trouvée.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                 {% if reclamationsRecentes is not empty %}
+                    <div class="card-footer text-center py-2">
+                        <a href="{{ path('admin_reclamation_index') }}" class="link-primary small">Voir toutes les réclamations <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                 {% endif %}
+            </div>
+        </div>
+
+        {# Right Column: Charts & Recent Reviews #}
+        <div class="col-xl-5 col-lg-6 mb-4">
+            {# Chart Card #}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom py-3">
+                    <h6 class="m-0"><i class="fas fa-chart-pie me-2"></i>Distribution des Notes d'Avis</h6>
+                </div>
+                <div class="card-body">
+                    {# Ensure data exists before rendering chart #}
+                    {% if distribution is defined and distribution|length >= 5 %}
+                        <div class="chart-container">
+                             <canvas id="notesChart"></canvas>
+                        </div>
+                    {% else %}
+                         <p class="text-center text-muted mt-3"><i class="fas fa-exclamation-triangle me-2"></i>Données insuffisantes pour afficher le graphique.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Recent Reviews Card #}
+             <div class="card shadow-sm">
+                 <div class="card-header card-header-custom py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0"><i class="fas fa-comments me-2"></i>Derniers Avis</h6>
+                   <!---Admin index to integrate here-->
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;"> {# Limit height and allow scroll #}
+                     {% if avisRecents is not empty %}
+                        {% for avis in avisRecents %}
+                             <div class="d-flex align-items-start mb-3 review-item">
+                                 <div class="flex-shrink-0 me-3">
+                                     {# Placeholder Icon - Replace with user avatar if available #}
+                                     <div class="bg-light rounded-circle review-user-icon">
+                                         <i class="fas fa-user"></i>
+                                     </div>
+                                 </div>
+                                 <div class="flex-grow-1">
+                                     <div class="review-stars mb-1" title="{{ avis.note }} / 5">
+                                         {% for i in 1..5 %}<i class="{{ i <= avis.note ? 'fas' : 'far' }} fa-star"></i>{% endfor %}
+                                         {# Use fas for filled, far for empty star #}
+                                     </div>
+                                     {# Optionally display user name/email if available #}
+                                     {# <small class="text-muted d-block mb-1">{{ avis.utilisateur.email ?? 'Utilisateur anonyme' }}</small> #}
+                                     <p class="mb-1 small" style="line-height: 1.4;"> {{ avis.contenu|striptags|slice(0, 100) }}{{ avis.contenu|striptags|length > 100 ? '...' : '' }}</p>
+                                     <small class="text-muted">{{ avis.dateAvis|date('d M Y') }}</small>
+                                 </div>
+                                 {# Optional: Link to view full review #}
+                                  {# <a href="{{ path('admin_avis_show', {'id': avis.id}) }}" class="btn btn-sm btn-light ms-auto"><i class="fas fa-eye"></i></a> #}
+                             </div>
+                             {% if not loop.last %}<hr class="my-2">{% endif %}
+                        {% endfor %}
+                     {% else %}
+                         <p class="text-center text-muted mt-3"><i class="fas fa-comment-slash me-2"></i>Aucun avis récent trouvé.</p>
+                     {% endif %}
+                 </div>
+             </div>
+
+        </div>{# End Right Column #}
+
+    </div>{# End Second Row #}
+
+</div> {# End container-fluid #}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Make sure Chart.js is loaded (e.g., via Webpack Encore, AssetMapper, or CDN in base.html.twig) #}
+    {# <script src="https://cdn.jsdelivr.net/npm/chart.js@3.x/dist/chart.min.js"></script> #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Notes Distribution Chart ---
+            const notesChartCanvas = document.getElementById('notesChart');
+            // Check if canvas exists and if distribution data is provided
+            {% if distribution is defined and distribution|length >= 5 %}
+                if (notesChartCanvas) {
+                    const ctx = notesChartCanvas.getContext('2d');
+                     // Get colors from CSS variables
+                     const chartColors = [
+                         getComputedStyle(document.documentElement).getPropertyValue('--chart-color-1').trim(),
+                         getComputedStyle(document.documentElement).getPropertyValue('--chart-color-2').trim(),
+                         getComputedStyle(document.documentElement).getPropertyValue('--chart-color-3').trim(),
+                         getComputedStyle(document.documentElement).getPropertyValue('--chart-color-4').trim(),
+                         getComputedStyle(document.documentElement).getPropertyValue('--chart-color-5').trim()
+                     ];
+
+                    const notesChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['1 étoile', '2 étoiles', '3 étoiles', '4 étoiles', '5 étoiles'],
+                            datasets: [{
+                                label: 'Nombre d\'avis',
+                                data: [
+                                    {{ distribution[1] ?? 0 }},
+                                    {{ distribution[2] ?? 0 }},
+                                    {{ distribution[3] ?? 0 }},
+                                    {{ distribution[4] ?? 0 }},
+                                    {{ distribution[5] ?? 0 }}
+                                ],
+                                backgroundColor: chartColors,
+                                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--background-light').trim() || '#ffffff', // Use light background for border
+                                borderWidth: 2,
+                                hoverOffset: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 15,
+                                        boxWidth: 12,
+                                        font: { size: 11 }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed !== null) {
+                                                label += context.parsed + ' avis';
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            },
+                             cutout: '65%' // Makes it a thinner doughnut chart
+                        }
+                    });
+                }
+            {% endif %} // End chart data check
+
+            // Enable Bootstrap Tooltips (if not already done globally)
+             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+             tooltipTriggerList.map(function (tooltipTriggerEl) {
+               if (tooltipTriggerEl.getAttribute('title')) {
+                    tooltipTriggerEl.setAttribute('data-bs-toggle', 'tooltip');
+                    tooltipTriggerEl.setAttribute('data-bs-placement', 'top');
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+               }
+             });
+
+        }); // End DOMContentLoaded
+    </script>
+{% endblock %}

@@ -1,0 +1,47 @@
+# config/services.yaml
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Security\EntityUserProviderDecorator:
+        arguments:
+            $registry: '@doctrine'
+            $class: 'App\Entity\Utilisateur'
+            $property: 'email'
+        public: false
+
+    # Service Pusher avec arguments positionnels
+    Pusher\Pusher:
+        arguments:
+            - '%env(string:PUSHER_APP_KEY)%'       # App Key
+            - '%env(string:PUSHER_APP_SECRET)%'    # App Secret
+            - '%env(string:PUSHER_APP_ID)%'        # App ID
+            - { cluster: '%env(string:PUSHER_APP_CLUSTER)%', useTLS: true }  # Options
+
+    App\EventSubscriber\AuditSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    App\Service\VonageSmsService:
+        arguments:
+            $apiKey: '%env(VONAGE_API_KEY)%'
+            $apiSecret: '%env(VONAGE_API_SECRET)%'
+            $from: '%env(VONAGE_FROM_NUMBER)%'
+
+    App\EventSubscriber\LocaleSubscriber:
+        arguments:
+            $defaultLocale: 'fr'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\EventListener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }

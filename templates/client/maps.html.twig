@@ -1,0 +1,121 @@
+
+{% extends 'base_front.html.twig' %}
+
+{% block title %}{{ 'map.title'|trans }}{% endblock %}
+
+{% block body %}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ 'map.title'|trans }}</h1>
+    <div id="map1" style="height: 600px;"></div>
+</div>
+
+{% if stations is not empty %}
+<h2 class="h5 mb-3">Nearby Stations</h2>
+<ul class="list-group mb-4">
+    {% for itineraire in itineraires %}
+        <li class="list-group-item">
+            {{ itineraire.startStat.nomStation }} — {{ itineraire.startStat.distance|number_format(2) }} km away
+        </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No nearby stations found.</p>
+{% endif %}
+
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://unpkg.com/leaflet-polylinedecorator@1.7.0/dist/leaflet.polylineDecorator.min.js"></script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    var map = L.map('map1').setView([36.8, 10.2], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 1. Load stations
+  fetch('{{ path('api_stations') }}')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        data.forEach(station => {
+            L.marker([station.latitude, station.longitude])
+                .addTo(map)
+                .bindPopup('<b>' + station.name + '</b>');
+        });
+    })
+    .catch(error => console.error('Erreur chargement des stations:', error));
+
+   fetch('{{ path('api_itineraires') }}')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(itineraire => {
+            const start = itineraire.startStation;
+            const end = itineraire.endStation;
+
+            if (
+                start && end &&
+                start.latitude !== null && start.longitude !== null &&
+                end.latitude !== null && end.longitude !== null
+            ) {
+                const startCoords = [start.latitude, start.longitude];
+                const endCoords = [end.latitude, end.longitude];
+
+                const polyline = L.polyline([startCoords, endCoords], {
+                    color: getColorByDistance(itineraire.distance),
+                    weight: 5,
+                    opacity: 0.9,
+                    className: 'interactive-itineraire-line'
+                }).addTo(map);
+
+                polyline.bindPopup(`
+                    <div style="font-size: 0.9rem;">
+                        <strong>${itineraire.nomItineraire}</strong><br>
+                        Distance: ${itineraire.distance} km
+                    </div>
+                `);
+            }
+        });
+    })
+    .catch(error => console.error('Erreur chargement des itinéraires:', error));
+
+// Optional: change color based on distance
+function getColorByDistance(distance) {
+    if (distance < 50) return '#3BBF82';      // green for short
+    if (distance < 150) return '#FFB703';     // yellow for medium
+    return '#FF6B6B';                         // red for long
+}
+
+
+    
+});
+
+
+</script>
+<script>
+navigator.geolocation.getCurrentPosition(success, error);
+
+function success(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    console.log('Latitude:', lat, 'Longitude:', lon);
+    getWeather(lat, lon);
+}
+
+function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+    document.getElementById('weatherAdvice').textContent = "Unable to access your location.";
+}
+</script>
+
+{% endblock %}

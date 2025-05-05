@@ -1,0 +1,73 @@
+# config/packages/security.yaml
+security:
+    password_hashers:
+        # 1) Fallback : tout ce qui implémente PasswordAuthenticatedUserInterface
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+            algorithm: plaintext
+
+        # 2) Spécifique à votre Utilisateur
+        App\Entity\Utilisateur:
+            algorithm: plaintext
+
+    # … le reste de votre fichier (providers, firewalls, access_control) …
+
+    providers:
+        app_user_provider:
+            id: App\Security\EntityUserProviderDecorator
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        front:
+            pattern: ^/(fr|en|front|client)
+            lazy: true
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+
+            form_login:
+                login_path: front_login
+                check_path: front_login
+                default_target_path: front_profile
+                use_referer: true
+
+            logout:
+                path: front_logout
+                target: /front/login
+
+            entry_point: form_login
+
+        main:
+            pattern: ^/(admin|utilisateur)
+            lazy: true
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: /utilisateur
+
+            logout:
+                path: app_logout
+                target: /utilisateur/login
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+
+    access_control:
+        # — front-office (signup, login, reset-password…) déjà en PUBLIC_ACCESS
+        - { path: '^/front/(signup|login|reset-password|reset-password/check-email|reset-password/reset)$', roles: PUBLIC_ACCESS }
+        - { path: '^/verify/email', roles: PUBLIC_ACCESS }
+        - { path: '^/front/', roles: ROLE_USER }
+
+        # — back-office : rendre publique la page de login /utilisateur/login
+        - { path: '^/utilisateur/login$', roles: PUBLIC_ACCESS }
+        # si vous avez aussi une route d’“admin login” (e.g. /admin/login), ajoutez-la pareil :
+        #- { path: '^/admin/login$', roles: PUBLIC_ACCESS }
+
+        # — tout le reste du back-office nécessite ROLE_ADMIN
+        - { path: '^/(admin|utilisateur)', roles: ROLE_ADMIN }

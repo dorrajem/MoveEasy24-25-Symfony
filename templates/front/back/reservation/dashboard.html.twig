@@ -1,0 +1,237 @@
+{# templates/back/reservation/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - Réservations{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<style>
+    .dashboard-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+    }
+    .stat-pending { background-color: #fbc02d; }
+    .stat-confirmed { background-color: #4caf50; }
+    .stat-cancelled { background-color: #e53935; }
+
+    .flex-chart {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    canvas {
+        background: #fff;
+        border-radius: 12px;
+        max-width: 300px;
+        max-height: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="pcoded-content">
+    <h2 class="mb-4"><i class="fas fa-chart-pie"></i> Statistiques des Réservations</h2>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card stat-box stat-pending">
+            <h4>En attente</h4>
+            <p style="font-size: 2rem">{{ stats['En attente'] ?? 0 }}</p>
+        </div>
+        <div class="dashboard-card stat-box stat-confirmed">
+            <h4>Confirmée</h4>
+            <p style="font-size: 2rem">{{ stats['Confirmée'] ?? 0 }}</p>
+        </div>
+        <div class="dashboard-card stat-box stat-cancelled">
+            <h4>Annulée</h4>
+            <p style="font-size: 2rem">{{ stats['Annulée'] ?? 0 }}</p>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <h5 class="mb-3">Répartition par statut & Nombre par statut</h5>
+        <div class="flex-chart">
+            <canvas id="statusChart" width="300" height="300"></canvas>
+            <canvas id="barChart" width="300" height="300"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <h5 class="mb-3">Réservations au fil du temps</h5>
+        {% if dates is defined %}
+        <canvas id="timeChart"></canvas>
+        {% else %}
+        <p class="text-muted">Pas de données disponibles pour le graphique temporel.</p>
+        {% endif %}
+    </div>
+
+    <div class="dashboard-card">
+        <h5 class="mb-3">Types de trains les plus populaires</h5>
+        {% if trainTypes is defined %}
+        <div class="flex-chart">
+            <canvas id="trainChart" width="300" height="300"></canvas>
+            <canvas id="trainBarChart" width="300" height="300"></canvas>
+        </div>
+        {% else %}
+        <p class="text-muted">Pas de données disponibles pour les types de trains.</p>
+        {% endif %}
+    </div>
+
+    <div class="dashboard-card mt-5">
+        <h5 class="mb-3">Toutes les Réservations</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>État</th>
+                    <th>Places</th>
+                    <th>Type de place</th>
+                    <th>Type de train</th>
+                    <th>Destination</th>
+                    <th>Utilisateur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservations %}
+                    <tr>
+                        <td>{{ r.dateR ? r.dateR|date('d/m/Y') : '' }}</td>
+                        <td>{{ r.heureR ? r.heureR|date('H:i') : '' }}</td>
+                        <td>{{ r.etatR }}</td>
+                        <td>{{ r.nbrplace }}</td>
+                        <td>{{ r.typeplace }}</td>
+                        <td>{{ r.typeTrainR }}</td>
+                        <td>{{ r.destinationR }}</td>
+                        <td>{{ r.NameUser }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="8" class="text-center">Aucune réservation trouvée</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const statusData = [{{ stats['En attente'] ?? 0 }}, {{ stats['Confirmée'] ?? 0 }}, {{ stats['Annulée'] ?? 0 }}];
+    const statusLabels = ['En attente', 'Confirmée', 'Annulée'];
+    const statusColors = ['#fbc02d', '#4caf50', '#e53935'];
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{ data: statusData, backgroundColor: statusColors }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Réservations',
+                data: statusData,
+                backgroundColor: statusColors,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    {% if dates is defined %}
+    const timeData = {{ dates|json_encode|raw }};
+    new Chart(document.getElementById('timeChart'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(timeData),
+            datasets: [{
+                label: 'Réservations',
+                data: Object.values(timeData),
+                borderColor: '#2196f3',
+                fill: true,
+                backgroundColor: 'rgba(33, 150, 243, 0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            tension: 0.3,
+            animation: false
+        }
+    });
+    {% endif %}
+
+    {% if trainTypes is defined %}
+    const trainData = {{ trainTypes|json_encode|raw }};
+    const trainLabels = Object.keys(trainData);
+    const trainValues = Object.values(trainData);
+    const trainColors = ['#3f51b5', '#ff9800', '#009688', '#9c27b0', '#ff5722'];
+
+    new Chart(document.getElementById('trainChart'), {
+        type: 'doughnut',
+        data: {
+            labels: trainLabels,
+            datasets: [{ data: trainValues, backgroundColor: trainColors }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    new Chart(document.getElementById('trainBarChart'), {
+        type: 'bar',
+        data: {
+            labels: trainLabels,
+            datasets: [{
+                label: 'Popularité Type Train',
+                data: trainValues,
+                backgroundColor: trainColors,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}

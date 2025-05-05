@@ -1,0 +1,88 @@
+{% extends 'base_front.html.twig' %}
+
+{% block title %}{{ 'page.index.title'|trans }}{% endblock %}
+
+{% block body %}
+
+<!-- 🚆 Hero Carousel -->
+<section id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{{ asset('imgs/train-station.jpg') }}" class="d-block w-100" alt="Station de train moderne">
+            <div class="carousel-caption">
+                <h1 class="display-4 fw-bold">{{ 'carousel.slide1.title'|trans }}</h1>
+                <p class="lead">{{ 'carousel.slide1.subtitle'|trans }}</p>
+                <a href="#" class="btn btn-success btn-lg mt-3">{{ 'carousel.slide1.button'|trans }}</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="{{ asset('imgs/personnel.jpg') }}" class="d-block w-100" alt="Accès transport pour personnes à mobilité réduite">
+            <div class="carousel-caption">
+                <h1 class="display-4 fw-bold">{{ 'carousel.slide2.title'|trans }}</h1>
+                <p class="lead">{{ 'carousel.slide2.subtitle'|trans }}</p>
+                <a href="#" class="btn btn-outline-light btn-lg mt-3">{{ 'carousel.slide2.button'|trans }}</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="{{ asset('imgs/digital-ticket.jpg') }}" class="d-block w-100" alt="Réservation de billets numérique">
+            <div class="carousel-caption">
+                <h1 class="display-4 fw-bold">{{ 'carousel.slide3.title'|trans }}</h1>
+                <p class="lead">{{ 'carousel.slide3.subtitle'|trans }}</p>
+                <a href="#" class="btn btn-primary btn-lg mt-3">{{ 'carousel.slide3.button'|trans }}</a>
+            </div>
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">{{ 'carousel.prev'|trans }}</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">{{ 'carousel.next'|trans }}</span>
+    </button>
+</section>
+
+<!-- 🛠️ Nos Services -->
+<section class="container py-5">
+    <h2 class="text-center section-title mb-4" data-aos="fade-up">{{ 'services.title'|trans }}</h2>
+    <div class="row text-center">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <h5>{{ 'services.fast_booking.title'|trans }}</h5>
+            <p>{{ 'services.fast_booking.text'|trans }}</p>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <h5>{{ 'services.accessibility.title'|trans }}</h5>
+            <p>{{ 'services.accessibility.text'|trans }}</p>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <h5>{{ 'services.feedback.title'|trans }}</h5>
+            <p>{{ 'services.feedback.text'|trans }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- 🗺️ Map -->
+<section class="container mb-5">
+    <h2 class="text-center section-title mb-4" data-aos="fade-up">{{ 'stations.title'|trans }}</h2>
+    <div id="map" data-aos="fade-up" data-aos-delay="100"></div>
+</section>
+
+<!-- 💬 Testimonials -->
+<section class="testimonials py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <h2 class="text-center section-title mb-5" data-aos="fade-up">{{ 'testimonials.title'|trans }}</h2>
+        <div class="row justify-content-center">
+            {% include 'partials/_testimonials.html.twig' %}
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

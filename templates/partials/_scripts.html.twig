@@ -1,0 +1,145 @@
+{# partials/_scripts.html.twig #}
+
+// Init AOS animations
+AOS.init({
+    once: true,
+    duration: 800
+});
+
+// Navbar scroll effect
+document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.querySelector('.navbar');
+    window.onscroll = function() {
+        if (window.pageYOffset > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    };
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const currentLocation = window.location.href;
+
+    navLinks.forEach(link => {
+        if(link.href === currentLocation) {
+            link.classList.add('active');
+        }
+
+        link.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('i');
+            if(icon) {
+                icon.style.transition = 'transform 0.3s ease';
+                icon.style.transform = 'scale(1.2) rotate(5deg)';
+            }
+        });
+        
+        link.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('i');
+            if(icon) {
+                icon.style.transform = 'scale(1) rotate(0)';
+            }
+        });
+    });
+});
+
+// Init Leaflet map
+var map = L.map('map').setView([36.8, 10.2], 7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+setTimeout(() => {
+    L.marker([36.8065, 10.1815]).addTo(map)
+        .bindPopup('Tunis Station')
+        .openPopup();
+}, 500);
+
+setTimeout(() => {
+    L.marker([35.8256, 10.6084]).addTo(map)
+        .bindPopup('Sousse Station');
+}, 1000);
+
+// 🗣️ Advanced Text-to-Speech System
+document.addEventListener('DOMContentLoaded', function() {
+    const speakButton = document.getElementById('ttsDropdown');
+    const stopButton = document.getElementById('stopButton');
+    const voiceSelect = document.getElementById('voiceSelect');
+    const speedControl = document.getElementById('speedControl');
+    const volumeControl = document.getElementById('volumeControl');
+    const synth = window.speechSynthesis;
+    let utterance;
+
+    // Load voices
+    function loadVoices() {
+        const voices = synth.getVoices();
+        voiceSelect.innerHTML = '';
+
+        voices.forEach((voice, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            voiceSelect.appendChild(option);
+        });
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    setTimeout(loadVoices, 500);
+
+    // Start speaking when dropdown button clicked
+    speakButton.addEventListener('click', function() {
+        if (synth.speaking) return;
+
+        let textToRead = '';
+        document.querySelectorAll('h1, h2, h3, p, a, li, button').forEach(element => {
+            if (element.innerText.trim() !== '') {
+                textToRead += element.innerText.trim() + '. ';
+            }
+        });
+
+        if (textToRead !== '') {
+            utterance = new SpeechSynthesisUtterance(textToRead);
+            const selectedVoice = synth.getVoices()[voiceSelect.value] || synth.getVoices()[0];
+            utterance.voice = selectedVoice;
+            utterance.lang = selectedVoice.lang || 'fr-FR';
+            utterance.rate = parseFloat(speedControl.value);
+            utterance.volume = parseFloat(volumeControl.value);
+
+            synth.cancel();
+            synth.speak(utterance);
+        }
+    });
+
+    // Stop speaking
+    stopButton.addEventListener('click', function() {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+    });
+
+    // Update voice/speed/volume while speaking
+    speedControl.addEventListener('input', function() {
+        if (utterance && synth.speaking) {
+            synth.cancel();
+            utterance.rate = parseFloat(speedControl.value);
+            synth.speak(utterance);
+        }
+    });
+
+    volumeControl.addEventListener('input', function() {
+        if (utterance && synth.speaking) {
+            synth.cancel();
+            utterance.volume = parseFloat(volumeControl.value);
+            synth.speak(utterance);
+        }
+    });
+
+    voiceSelect.addEventListener('change', function() {
+        if (utterance && synth.speaking) {
+            synth.cancel();
+            utterance.voice = synth.getVoices()[voiceSelect.value];
+            synth.speak(utterance);
+        }
+    });
+});

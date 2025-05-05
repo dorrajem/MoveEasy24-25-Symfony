@@ -1,0 +1,12 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+map:
+    path: /{_locale}/map
+    controller: App\Controller\ClientController::showMap
+    requirements:
+        _locale: fr|en
+    defaults:
+        _locale: fr

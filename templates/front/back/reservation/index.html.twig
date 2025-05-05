@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Équipements{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .table th, .table td {
+            padding: 4px;
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .btn {
+            width: auto;
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 2px 4px;
+        }
+
+        .equipment-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 0.6rem;
+                padding: 1px 2px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block welc %}
+<div class="container-fluid mt-2">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Liste des Équipements</h5>
+            <div class="d-flex gap-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom d'équipement" style="width: 300px;">
+                <a href="{{ path('equipments_pdf') }}" class="btn btn-danger">
+                    <i class="fas fa-file-pdf"></i> Exporter PDF
+                </a>
+                <a href="{{ path('app_equipement_new') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-2">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show py-1 px-2" role="alert">
+                        <small>{{ message }}</small>
+                        <button type="button" class="btn-close p-1" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if equipments is empty %}
+                <div class="alert alert-warning text-center py-1 px-2"><small>Aucun équipement trouvé.</small></div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Quantité Disponible</th>
+                                <th>Prix</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for equipment in equipments %}
+                            <tr>
+                                <td>{{ equipment.id }}</td>
+                                <td class="event-image-cell">
+                                    {% if equipment.image %}
+                                        <img src="{{ asset('images/' ~ equipment.image) }}" alt="Image de l'équipement" class="equipment-image" title="{{ equipment.nomEquip }}">
+                                    {% else %}
+                                        <i class="fas fa-image text-muted" style="font-size: 0.8rem;"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-semibold">
+                                    {{ equipment.nomEquip|length > 15 ? equipment.nomEquip|slice(0, 15) ~ '...' : equipment.nomEquip }}
+                                </td>
+                                <td>{{ equipment.qte_dispo }}</td>
+                                <td>{{ equipment.prix }} dt</td>
+                                <td>
+                                    {{ equipment.description|length > 20 ? equipment.description|slice(0, 20) ~ '...' : equipment.description }}
+                                </td>
+                                <td class="actions-cell">
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_equipement_show', {'id': equipment.id}) }}" class="btn btn-info btn-sm" title="Voir Détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        <a href="{{ path('app_equipement_edit', {'id': equipment.id}) }}" class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        
+                                        <form method="post" action="{{ path('app_equipement_delete', {'id': equipment.id}) }}" onsubmit="return confirm('Supprimer cet équipement ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipment.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll("tbody tr");
+
+            rows.forEach(row => {
+                let name = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+
+                if (name.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none"; 
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

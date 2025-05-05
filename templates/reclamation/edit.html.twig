@@ -1,0 +1,157 @@
+{# templates/reclamation/edit.html.twig #}
+{% extends 'base_front.html.twig' %}
+
+{% block title %}Modifier la Réclamation #{{ reclamation.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .riot-card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .riot-banner {
+            background: linear-gradient(90deg, #0a323c 0%, #1e5770 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .riot-btn {
+            background-color: #d13639;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+        .riot-btn:hover {
+            background-color: #b13033;
+            color: white;
+        }
+        .btn-update {
+            background-color: #1e88e5;
+            color: white;
+        }
+        .btn-update:hover {
+            background-color: #1565c0;
+            color: white;
+        }
+        .btn-cancel {
+            background-color: #757575;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #616161;
+            color: white;
+        }
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {# Banner #}
+    <div class="riot-banner">
+        <div class="container">
+            <h1>Modifier la Réclamation #{{ reclamation.id }}</h1>
+            <p class="lead">Mise à jour du {{ "now"|date('d/m/Y H:i') }}</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        {# Flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="mb-4">
+            <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour aux détails
+            </a>
+        </div>
+        
+        <div class="card riot-card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Formulaire de modification</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'id': 'edit-form', 'class': 'needs-validation'}}) }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.categorie, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.categorie, {'attr': {'class': 'form-select'}}) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.categorie) }}
+                                </div>
+                            </div>
+                        </div>
+                       {% if form.statut is defined %}
+    <div class="col-md-6">
+        <div class="mb-3">
+            {{ form_label(form.statut, 'Statut', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.statut) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '5'}}) }}
+                        <div class="invalid-feedback">
+                            {{ form_errors(form.description) }}
+                        </div>
+                    </div>
+
+                    {# Hidden fields #}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-update">
+                            <i class="fas fa-save"></i> Enregistrer les modifications
+                        </button>
+                        <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-cancel">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation
+            const form = document.getElementById('edit-form');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            });
+        });
+    </script>
+{% endblock %}

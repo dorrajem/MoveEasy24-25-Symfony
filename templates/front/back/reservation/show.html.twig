@@ -1,0 +1,215 @@
+{# templates/back/reservation/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des réservations{% endblock %}
+
+{% block css %}
+{{ parent() }}
+<style>
+    :root {
+        --primary-bg: #2B2D3E;
+        --primary-dark: #1F2233;
+        --primary-light: #394165;
+        --secondary-bg: #f8f9fa;
+        --white: #ffffff;
+        --text-primary: #333;
+        --text-secondary: #6c757d;
+        --border-color: #dee2e6;
+        --button-green: #8BC34A;
+        --button-blue: #03A9F4;
+        --button-red: #FF5252;
+        --hover-bg: #f1f1f1;
+        --transition: all 0.3s ease;
+        --border-radius: 8px;
+        --card-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .pcoded-content {
+        padding: 20px;
+    }
+
+    .card {
+        background: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        padding: 20px 30px;
+        margin: 0 auto;
+        width: 96%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .card h2 {
+        display: flex;
+        align-items: center;
+        font-size: 1.7rem;
+        margin-bottom: 20px;
+        color: var(--primary-dark);
+    }
+
+    .card h2 i {
+        margin-right: 10px;
+        color: var(--primary-bg);
+    }
+
+    #search-input {
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 10px 15px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        font-size: 1rem;
+    }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    th, td {
+        padding: 14px 12px;
+        background: var(--white);
+        text-align: left;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+    }
+
+    th {
+        background: var(--primary-bg);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    tr:hover td {
+        background: var(--hover-bg);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 9px 15px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-decoration: none;
+        background: transparent;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 2px solid;
+    }
+
+    .btn-edit {
+        border-color: var(--button-blue);
+        color: var(--button-blue);
+    }
+
+    .btn-delete {
+        border-color: var(--button-red);
+        color: var(--button-red);
+    }
+
+    .btn:hover {
+        background-color: var(--hover-bg);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        display: inline-block;
+        font-weight: 500;
+    }
+
+    .badge-confirmed { background: #E8F5E9; color: #2E7D32; }
+    .badge-pending { background: #FFF8E1; color: #F57F17; }
+    .badge-cancelled { background: #FFEBEE; color: #C62828; }
+
+    @media (max-width: 992px) {
+        table { min-width: 900px; }
+    }
+
+    @media (max-width: 768px) {
+        .btn { width: 100%; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="pcoded-content">
+    <div class="card">
+        <h2><i class="fas fa-ticket-alt"></i> Liste des réservations</h2>
+
+        <input type="text" id="search-input" class="form-control" placeholder="Rechercher une réservation...">
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>État</th>
+                        <th>Nombre de places</th>
+                        <th>Type de place</th>
+                        <th>Type de train</th>
+                        <th>Destination</th>
+                        <th>Utilisateur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reservation-body">
+                    {% include 'back/reservation/_table_body.html.twig' %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById('search-input');
+        const tableBody = document.getElementById('reservation-body');
+
+        if (!searchInput || !tableBody) {
+            console.warn("\ud83d\udd15 searchInput or tableBody not found!");
+            return;
+        }
+
+        let debounce;
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounce);
+
+            debounce = setTimeout(() => {
+                const query = searchInput.value.trim();
+                const url = `/admin/reservation/search?q=${encodeURIComponent(query)}`;
+                const xhr = new XMLHttpRequest();
+
+                xhr.open("GET", url, true);
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        tableBody.innerHTML = xhr.responseText;
+                    }
+                };
+
+                xhr.send();
+            }, 300);
+        });
+    });
+</script>
+{% endblock %}
